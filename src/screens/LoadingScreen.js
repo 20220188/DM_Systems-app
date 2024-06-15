@@ -11,11 +11,12 @@ export default function LoadingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text>Loading....</Text>
+      <Text style={styles.text}>Loading....</Text>
     </View>
   );
 }
 
+//Estilos de la pagina
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -23,4 +24,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#0F0147',
   },
+  text:{
+    color:'white'
+  }
 });

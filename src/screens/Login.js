@@ -1,34 +1,50 @@
 // Login.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function LoginScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login Screen</Text>
-      
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register')}>
+          <Icon name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Login Screen</Text>
 
-      <TouchableOpacity
-        
-        onPress={() => navigation.navigate('RecuperacionContraseñas')}
-      >
-        <Text style={styles.buttonText}>Olvidé mi contraseña</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.buttonText}>Iniciar Sesion</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttontext} onPress={() => navigation.navigate('RecuperacionContraseñas')}>
+          <Text style={styles.buttonText}>Olvidé mi contraseña</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0F0147',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0F0147',
+    paddingTop: 20, // Ajustar según sea necesario
+  },
+  backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    color:'white'
+    color: 'white',
   },
   button: {
     backgroundColor: '#007BFF',

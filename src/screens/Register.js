@@ -2,20 +2,22 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity  } from 'react-native';
 
+//Aqui van los elementos de la pagina
+//TouchableOpacity es un boton
+//Input es para la escritura de textos
+
 export default function Register({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text>¿Ya tienes una cuenta?</Text>
-      <TouchableOpacity
-        style={styles.boton}
-        onPress={() => navigation.navigate('Login')}
-      >
-        <Text style={styles.buttonText}>Inicia Sesión</Text>
+      <Text style={styles.title}>Registro</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
+//Estilos de la pagina
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -35,5 +37,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#5D41DE',
     fontSize: 16,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    color: 'white',
   },
 });

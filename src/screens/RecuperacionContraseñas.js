@@ -1,45 +1,57 @@
-// RecuperacionContraseñas.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+
 
 export default function RecuperacionContraseñasScreen({ navigation }) {
   const [email, setEmail] = useState('');
 
   const handlePasswordRecovery = () => {
-    // Aquí iría la lógica para recuperar la contraseña
-    console.log('Recuperar contraseña para:', email);
-    // Navegar de regreso a la pantalla de login
     navigation.navigate('CodigoRecuperacion');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Recuperación de Contraseñas</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingrese su correo electrónico"
-        placeholderTextColor="#aaa"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TouchableOpacity
-        style={styles.boton}
-        onPress={handlePasswordRecovery}
-      >
-        <Text style={styles.buttonText}>Enviar</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Login')}>
+          <Icon name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Recuperación de Contraseñas</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su correo electrónico"
+          placeholderTextColor="#aaa"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TouchableOpacity
+          style={styles.boton}
+          onPress={handlePasswordRecovery}
+        >
+          <Text style={styles.buttonText}>Enviar</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0F0147',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0F0147',
+    paddingTop: 20, // Ajustar según sea necesario
+  },
+  backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
   title: {
     fontSize: 24,
