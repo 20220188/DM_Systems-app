@@ -1,4 +1,3 @@
-// navigation.js
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoadingScreen from './LoadingScreen';
@@ -7,7 +6,7 @@ import Login from './Login';
 import Recu from './RecuperacionContraseñas';
 import Codigo from './CodigoRecuperacion';
 import Contra from './CambiarContraseñas';
-import Casa from './HomeScreen';
+import Acc from './Acciones';
 
 const Stack = createStackNavigator();
 
@@ -16,13 +15,12 @@ function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Loading">
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
-        <Stack.Screen name="RecuperacionContraseñas" component={Recu} options={{ headerShown: false }}/>
-        <Stack.Screen name="CodigoRecuperacion" component={Codigo} options={{ headerShown: false }}/>
-        <Stack.Screen name="CambiarContraseñas" component={Contra} options={{ headerShown: false }}/>
-        <Stack.Screen name="HomeScreen" component={Casa} options={{ headerShown: false }}/>
-        
+        <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="RecuperacionContraseñas" component={Recu} options={{ headerShown: false }} />
+        <Stack.Screen name="CodigoRecuperacion" component={Codigo} options={{ headerShown: false }} />
+        <Stack.Screen name="CambiarContraseñas" component={Contra} options={{ headerShown: false }} />
+        <Stack.Screen name="Acciones" component={Acc} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

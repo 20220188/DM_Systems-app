@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }) {
         <Image />
         <Text style={styles.title}>Login Screen</Text>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HomeScreen')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Acciones')}>
           <Text style={styles.buttonText}>Iniciar Sesion</Text>
         </TouchableOpacity>
 
