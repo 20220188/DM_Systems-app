@@ -1,6 +1,8 @@
 // HomeScreen.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image  } from 'react-native';
+import Icon from '../img/logoSystems.jpg';
+
 
 //Aqui van los elementos de la pagina
 //TouchableOpacity es un boton
@@ -9,6 +11,7 @@ import { View, Text, StyleSheet, TouchableOpacity  } from 'react-native';
 export default function Register({ navigation }) {
   return (
     <View style={styles.container}>
+      <Image source={Icon} style={styles.image}/>
       <Text style={styles.title}>Registro</Text>
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
@@ -43,4 +46,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: 'white',
   },
+  image: {
+    width:100,
+    height:100,
+    resizeMode:"cover"
+},
 });
