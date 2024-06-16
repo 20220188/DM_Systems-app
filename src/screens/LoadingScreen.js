@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Icon from '../img/loading.jpg';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
 export default function LoadingScreen({ navigation }) {
   useEffect(() => {
-    // Simula una espera de 2 segundos antes de navegar a la página de inicio
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       navigation.replace('Register');
-    }, 2000);
-  }, []);
+    }, 6000);
+
+    return () => clearTimeout(timeoutId); // Clear timeout on unmount
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
+      <Image source={require('../img/loading.jpg')} style={styles.logo} /> 
       <Text style={styles.text}>Loading...</Text> 
     </View>
   );
@@ -28,8 +29,9 @@ const styles = StyleSheet.create({
   logo: {
     width: 200, // Ajusta el tamaño según sea necesario
     height: 200, // Ajusta el tamaño según sea necesario
+    backgroundColor: 'white',
   },
-  text:{
-    color:'white'
-  }
+  text: {
+    color: 'white',
+  },
 });
