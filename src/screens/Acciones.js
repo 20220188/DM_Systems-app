@@ -2,7 +2,10 @@ import React, { useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+
+const Tab = createBottomTabNavigator();
 export default function Acciones({ navigation }) {
   const drawer = useRef(null);
 
@@ -13,28 +16,28 @@ export default function Acciones({ navigation }) {
         drawer.current.closeDrawer();
         // Add your navigation logic here
       }}>
-        <Icon name="heart" size={24} color="black" style={styles.drawerIcon} />
+        <Icon name="user" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Administradores</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.drawerItem, styles.drawerItemSelected]} onPress={() => {
         drawer.current.closeDrawer();
         // Add your navigation logic here
       }}>
-        <Icon name="heart" size={24} color="black" style={styles.drawerIcon} />
+        <Icon name="star" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Puntos de venta</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.drawerItem} onPress={() => {
         drawer.current.closeDrawer();
         // Add your navigation logic here
       }}>
-        <Icon name="heart" size={24} color="black" style={styles.drawerIcon} />
+        <Icon name="cog" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Caja</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.drawerItem} onPress={() => {
         drawer.current.closeDrawer();
         // Add your navigation logic here
       }}>
-        <Icon name="heart" size={24} color="black" style={styles.drawerIcon} />
+        <Icon name="envelope" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Dependientes</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.closeButton} onPress={() => navigation.navigate('Login')}>
@@ -57,10 +60,19 @@ export default function Acciones({ navigation }) {
           <TouchableOpacity style={styles.menuButton} onPress={() => drawer.current.openDrawer()}>
             <Icon name="bars" size={24} color="black" />
           </TouchableOpacity>
-          <Text style={styles.title}>Home Screen</Text>
+          <Text style={styles.title}></Text>
         </View>
       </SafeAreaView>
     </DrawerLayout>
+  );
+}
+
+function BottomTabNavigator() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Página Dos" component={PáginaDos} />
+      <Tab.Screen name="Acciones" component={Acc} />
+    </Tab.Navigator>
   );
 }
 
