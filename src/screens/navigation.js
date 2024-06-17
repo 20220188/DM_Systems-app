@@ -8,6 +8,9 @@ import Codigo from './CodigoRecuperacion';
 import Contra from './CambiarContraseñas';
 import Admins from './Admins';
 import Inicio from './HomeScreen';
+import Puntos from './PuntosVenta';
+import Caja from './Caja';
+import Dependientes from './Dependientes';
 
 const Stack = createStackNavigator();
 
@@ -22,9 +25,10 @@ function AppNavigator() {
         <Stack.Screen name="CodigoRecuperacion" component={Codigo} options={{ headerShown: false }} />
         <Stack.Screen name="CambiarContraseñas" component={Contra} options={{ headerShown: false }} />
         <Stack.Screen name="Admins" component={Admins} options={{ headerShown: false }} />
-        <Stack.Screen name="HomeScreen" component={Inicio
-
-        } options={{ headerShown: false }} />
+        <Stack.Screen name="HomeScreen" component={Inicio} options={{ headerShown: false }} />
+        <Stack.Screen name="PuntosVenta" component={Puntos} options={{ headerShown: false }} />
+        <Stack.Screen name="Caja" component={Caja} options={{ headerShown: false }} />
+        <Stack.Screen name="Dependientes" component={Dependientes} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

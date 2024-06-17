@@ -16,7 +16,7 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.drawerTitle}>Escoge</Text>
 
       {/*Boton para el inicio*/}
-      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('HomeScreen')}>
+      <TouchableOpacity style={[styles.drawerItem, styles.drawerItemSelected]} onPress={() => navigation.navigate('HomeScreen')}>
         <Icon name="heart" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Inicio</Text>
       </TouchableOpacity>
@@ -28,19 +28,19 @@ export default function HomeScreen({ navigation }) {
       </TouchableOpacity>
       
       {/*Boton para los puntos de venta*/}
-      <TouchableOpacity style={[styles.drawerItem, styles.drawerItemSelected]} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('PuntosVenta')}>
         <Icon name="star" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Puntos de venta</Text>
       </TouchableOpacity>
 
       {/*Boton para la caja*/}
-      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Caja')}>
         <Icon name="cog" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Caja</Text>
       </TouchableOpacity>
 
       {/*Boton para los dependientes*/}
-      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Dependientes')}>
         <Icon name="envelope" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Dependientes</Text>
       </TouchableOpacity>
@@ -72,7 +72,7 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
           <Text style={styles.title}></Text>
           
-    <Text>hola</Text>
+    <Text>Inicio</Text>
   
         </View>
       </SafeAreaView>
