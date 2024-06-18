@@ -3,56 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView,TextInput } from
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import CustomDrawer from '../components/CustomDrawer';
 
 export default function HomeScreen({ navigation }) {
-  const drawer = useRef(null);
   
 
-  const renderDrawer = () => (
-
-    <View style={styles.drawerContainer}>
-
-      {/* Agrega aquí el contenido del Drawer */}
-      <Text style={styles.drawerTitle}>Escoge</Text>
-
-      {/*Boton para el inicio*/}
-      <TouchableOpacity style={[styles.drawerItem, styles.drawerItemSelected]} onPress={() => navigation.navigate('HomeScreen')}>
-        <Icon name="heart" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Inicio</Text>
-      </TouchableOpacity>
-
-      {/*Boton para los administradores*/}
-      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Admins')}>
-        <Icon name="user" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Administradores</Text>
-      </TouchableOpacity>
-      
-      {/*Boton para los puntos de venta*/}
-      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('PuntosVenta')}>
-        <Icon name="star" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Puntos de venta</Text>
-      </TouchableOpacity>
-
-      {/*Boton para la caja*/}
-      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Caja')}>
-        <Icon name="cog" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Caja</Text>
-      </TouchableOpacity>
-
-      {/*Boton para los dependientes*/}
-      <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Dependientes')}>
-        <Icon name="envelope" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Dependientes</Text>
-      </TouchableOpacity>
-      
-      {/*Boton para cerrar sesion*/}
-      <TouchableOpacity style={styles.closeButton} onPress={() => navigation.navigate('Login')}>
-        <Icon name="times-circle" size={24} color="red" />
-      </TouchableOpacity>
-
-    </View>
-    
-  );
+  const drawer = useRef(null);
 
   return (
     <DrawerLayout
@@ -61,20 +17,16 @@ export default function HomeScreen({ navigation }) {
       drawerPosition="left"
       drawerType="slide"
       drawerBackgroundColor="#7393FC"
-      renderNavigationView={renderDrawer}
+      renderNavigationView={() => <CustomDrawer navigation={navigation} />}
     >
-
-      {/*Aqui va el codigo de la pagina con sus estilos y todo eso*/}
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <TouchableOpacity style={styles.menuButton} onPress={() => drawer.current.openDrawer()}>
             <Icon name="bars" size={24} color="black" />
           </TouchableOpacity>
           
-          <Text style={styles.title}>Bienvenido!</Text>
-      <Text style={styles.subtitle}>Admin</Text>
-    
-  
+          <Text style={styles.title}>Inicio!</Text>
+          <Text style={styles.subtitle}></Text>
         </View>
       </SafeAreaView>
     </DrawerLayout>
