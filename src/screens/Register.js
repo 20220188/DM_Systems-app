@@ -1,18 +1,73 @@
-// HomeScreen.js
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image  } from 'react-native';
-import Icon from '../img/logoSystems.jpg';
-
-
-//Aqui van los elementos de la pagina
-//TouchableOpacity es un boton
-//Input es para la escritura de textos
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 export default function Register({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleRegister = () => {
+    // Handle: lógica del registro
+  };
+
   return (
     <View style={styles.container}>
-      <Image source={Icon} style={styles.image}/>
+      <Image source={require('../img/logodm.png')} style={styles.image} />
       <Text style={styles.title}>Registro</Text>
+
+      {/* Etiquetas sobre los TextInput */}
+      <Text style={styles.label}>Correo</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Ingrese su correo"
+        placeholderTextColor="#aaa"
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <Text style={styles.label}>Nombre</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Ingrese su nombre"
+        placeholderTextColor="#aaa"
+        value={name}
+        onChangeText={setName}
+      />
+
+      <Text style={styles.label}>Usuario</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Ingrese su usuario"
+        placeholderTextColor="#aaa"
+        value={username}
+        onChangeText={setUsername}
+      />
+
+      <Text style={styles.label}>Contraseña</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Ingrese su contraseña"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <Text style={styles.label}>Confirmar contraseña</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirme su contraseña"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+
+      <TouchableOpacity style={styles.boton} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Registro</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
       </TouchableOpacity>
@@ -20,22 +75,23 @@ export default function Register({ navigation }) {
   );
 }
 
-//Estilos de la pagina
+// Estilos de la página
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0F0147',
+    padding: 20,
+    paddingTop: 50, // Añade un padding-top para espacio encima del logo
   },
-  boton:{
+  boton: {
     backgroundColor: '#D2D9F1',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 20,
     marginVertical: 10,
     width: '80%',
     alignItems: 'center',
-    color: '#5D41DE'
   },
   buttonText: {
     color: '#5D41DE',
@@ -45,10 +101,31 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     color: 'white',
+    textAlign: 'center', // Añade textAlign para centrar el texto
   },
   image: {
-    width:100,
-    height:100,
-    resizeMode:"cover"
-},
+    width: 100, // Ajusta el tamaño adecuadamente
+    height: 100, // Ajusta el tamaño adecuadamente
+    resizeMode: 'cover',
+    marginBottom: 20,
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: '#000',
+    marginBottom: 10,
+    zIndex: 1, // Añade zIndex para asegurar que estén encima del logo
+    elevation: 2, // Añade elevación para sombra en Android
+  },
+  label: {
+    alignSelf: 'flex-start',
+    marginLeft: 10,
+    marginBottom: 5,
+    color: 'white',
+  },
 });
+

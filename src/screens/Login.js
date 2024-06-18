@@ -1,6 +1,5 @@
-// Login.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function LoginScreen({ navigation }) {
@@ -10,15 +9,31 @@ export default function LoginScreen({ navigation }) {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register')}>
           <Icon name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
-        <Image />
-        <Text style={styles.title}>Login Screen</Text>
+        <Image source={require('../img/logodm.png')} style={styles.image} />
+        <Text style={styles.title}>D&M Systems</Text>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HomeScreen')}>
-          <Text style={styles.buttonText}>Iniciar Sesion</Text>
+        {/* Etiquetas sobre los TextInput */}
+        <Text style={styles.label}>Usuario</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su usuario"
+          placeholderTextColor="#aaa"
+        />
+
+        <Text style={styles.label}>Contraseña</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su contraseña"
+          placeholderTextColor="#aaa"
+          secureTextEntry
+        />
+
+        <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('HomeScreen')}>
+          <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttontext} onPress={() => navigation.navigate('RecuperacionContraseñas')}>
-          <Text style={styles.buttonText}>Olvidé mi contraseña</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('RecuperacionContraseñas')}>
+          <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -35,7 +50,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0F0147',
-    paddingTop: 20, // Ajustar según sea necesario
+    paddingTop: 20,
   },
   backButton: {
     position: 'absolute',
@@ -47,16 +62,43 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: 'white',
   },
-  button: {
-    backgroundColor: '#007BFF',
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: 'cover',
+    marginBottom: 20,
+  },
+  input: {
+    width: '80%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: '#000',
+    marginBottom: 10,
+  },
+  boton: {
+    backgroundColor: '#D2D9F1',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 20,
     marginVertical: 10,
     width: '80%',
     alignItems: 'center',
   },
   buttonText: {
+    color: '#5D41DE',
+    fontSize: 16,
+  },
+  forgotPasswordText: {
     color: '#D2D9F1',
     fontSize: 16,
+    marginTop: 20,
+  },
+  label: {
+    alignSelf: 'flex-start',
+    marginLeft: '10%',
+    marginBottom: 5,
+    color: 'white',
   },
 });
