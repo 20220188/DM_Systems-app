@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView,TextInput } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomDrawer from '../components/CustomDrawer';
 
 export default function HomeScreen({ navigation }) {
