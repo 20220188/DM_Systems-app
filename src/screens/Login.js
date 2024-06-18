@@ -1,41 +1,48 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register')}>
-          <Icon name="arrow-left" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Image source={require('../img/logodm.png')} style={styles.image} />
-        <Text style={styles.title}>D&M Systems</Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register')}>
+            <Icon name="arrow-left" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Image source={require('../img/logodm.png')} style={styles.image} />
+          <Text style={styles.title}>D&M Systems</Text>
 
-        {/* Etiquetas sobre los TextInput */}
-        <Text style={styles.label}>Usuario</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su usuario"
-          placeholderTextColor="#aaa"
-        />
+          {/* Etiquetas sobre los TextInput */}
+          <Text style={styles.label}>Usuario</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese su usuario"
+            placeholderTextColor="#aaa"
+          />
 
-        <Text style={styles.label}>Contraseña</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su contraseña"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-        />
+          <Text style={styles.label}>Contraseña</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese su contraseña"
+            placeholderTextColor="#aaa"
+            secureTextEntry
+          />
 
-        <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('HomeScreen')}>
-          <Text style={styles.buttonText}>Iniciar sesión</Text>
-        </TouchableOpacity>
+          <View style={styles.divider} />
 
-        <TouchableOpacity onPress={() => navigation.navigate('RecuperacionContraseñas')}>
-          <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('HomeScreen')}>
+            <Text style={styles.buttonText}>Iniciar sesión</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('RecuperacionContraseñas')}>
+            <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -46,7 +53,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0F0147',
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0F0147',
@@ -77,6 +84,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
     marginBottom: 10,
+  },
+  divider: {
+    width: '80%',
+    height: 1,
+    backgroundColor: '#D2D9F1',
+    marginVertical: 20,
   },
   boton: {
     backgroundColor: '#D2D9F1',

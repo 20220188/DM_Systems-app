@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView,TextInput } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -70,9 +70,10 @@ export default function HomeScreen({ navigation }) {
           <TouchableOpacity style={styles.menuButton} onPress={() => drawer.current.openDrawer()}>
             <Icon name="bars" size={24} color="black" />
           </TouchableOpacity>
-          <Text style={styles.title}></Text>
           
-    <Text>Inicio</Text>
+          <Text style={styles.title}>Bienvenido!</Text>
+      <Text style={styles.subtitle}>Admin</Text>
+    
   
         </View>
       </SafeAreaView>

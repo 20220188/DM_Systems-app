@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
 
 export default function Register({ navigation }) {
   const [email, setEmail] = useState('');
@@ -13,72 +13,76 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../img/logodm.png')} style={styles.image} />
-      <Text style={styles.title}>Registro</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image source={require('../img/logodm.png')} style={styles.image} />
+        <Text style={styles.title}>Registro</Text>
 
-      {/* Etiquetas sobre los TextInput */}
-      <Text style={styles.label}>Correo</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingrese su correo"
-        placeholderTextColor="#aaa"
-        value={email}
-        onChangeText={setEmail}
-      />
+        {/* Etiquetas sobre los TextInput */}
+        <Text style={styles.label}>Correo</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su correo"
+          placeholderTextColor="#aaa"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <Text style={styles.label}>Nombre</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingrese su nombre"
-        placeholderTextColor="#aaa"
-        value={name}
-        onChangeText={setName}
-      />
+        <Text style={styles.label}>Nombre</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su nombre"
+          placeholderTextColor="#aaa"
+          value={name}
+          onChangeText={setName}
+        />
 
-      <Text style={styles.label}>Usuario</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingrese su usuario"
-        placeholderTextColor="#aaa"
-        value={username}
-        onChangeText={setUsername}
-      />
+        <Text style={styles.label}>Usuario</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su usuario"
+          placeholderTextColor="#aaa"
+          value={username}
+          onChangeText={setUsername}
+        />
 
-      <Text style={styles.label}>Contraseña</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingrese su contraseña"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <Text style={styles.label}>Contraseña</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su contraseña"
+          placeholderTextColor="#aaa"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      <Text style={styles.label}>Confirmar contraseña</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Confirme su contraseña"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+        <Text style={styles.label}>Confirmar contraseña</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Confirme su contraseña"
+          placeholderTextColor="#aaa"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
 
-      <TouchableOpacity style={styles.boton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registro</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
-      </TouchableOpacity>
-    </View>
+        <View style={styles.divider} />
+
+        <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.buttonText}>Registro</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 // Estilos de la página
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0F0147',
@@ -121,6 +125,12 @@ const styles = StyleSheet.create({
     zIndex: 1, // Añade zIndex para asegurar que estén encima del logo
     elevation: 2, // Añade elevación para sombra en Android
   },
+  divider: {
+    width: '80%',
+    height: 1,
+    backgroundColor: '#D2D9F1',
+    marginVertical: 20,
+  },
   label: {
     alignSelf: 'flex-start',
     marginLeft: 10,
@@ -128,4 +138,5 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
+
 
