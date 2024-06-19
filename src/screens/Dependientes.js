@@ -1,11 +1,13 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Button } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Modal } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../components/CustomDrawer';
+import LoadingScreen from './LoadingScreen';
 
 export default function Dependientes({ navigation }) {
   const drawer = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const data = [
     { id: '1', usuario: 'texto', contrasena: 'texto' },
@@ -17,6 +19,14 @@ export default function Dependientes({ navigation }) {
     { id: '7', usuario: 'texto', contrasena: 'texto' },
   ];
 
+  const handleLogout = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      navigation.replace('Login');
+    }, 3000);
+  };
+
   return (
     <DrawerLayout
       ref={drawer}
@@ -24,7 +34,7 @@ export default function Dependientes({ navigation }) {
       drawerPosition="left"
       drawerType="slide"
       drawerBackgroundColor="#7393FC"
-      renderNavigationView={() => <CustomDrawer navigation={navigation} />}
+      renderNavigationView={() => <CustomDrawer navigation={navigation} onLogout={handleLogout} />}
     >
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
@@ -33,7 +43,7 @@ export default function Dependientes({ navigation }) {
           </TouchableOpacity>
 
           <Text style={styles.title}>Dependientes</Text>
-          <Icon name="user-plus" size={50} color="black" style={styles.icon} />
+          <Icon name="truck" size={50} color="black" style={styles.icon} />
           <TextInput style={styles.input} placeholder="Usuario" />
           <TextInput style={styles.input} placeholder="Contraseña" secureTextEntry />
 
@@ -67,6 +77,12 @@ export default function Dependientes({ navigation }) {
           </View>
         </View>
       </SafeAreaView>
+
+      {isLoading && (
+        <Modal visible={isLoading} transparent={true}>
+          <LoadingScreen navigation={navigation} />
+        </Modal>
+      )}
     </DrawerLayout>
   );
 }

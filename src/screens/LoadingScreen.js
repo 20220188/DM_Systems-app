@@ -39,11 +39,12 @@ const LoadingScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
+      
       <Animated.Image
         source={{ uri: loadIMG }}
         style={[styles.logo, { transform: [{ rotate: spin }] }]}
       />
+      
     </View>
   );
 };
@@ -59,8 +60,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     resizeMode: 'cover',
-    marginBottom: 20,
-    marginTop: 50,
+    marginBottom: 0,
+    marginTop: 0,
   },
   image: {
     width: 400, // Aumenta el ancho de la imagen

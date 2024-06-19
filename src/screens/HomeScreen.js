@@ -1,13 +1,15 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Modal } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../components/CustomDrawer';
 import { Avatar, ListItem } from 'react-native-elements';
 import * as Progress from 'react-native-progress';
+import LoadingScreen from './LoadingScreen'; // Asegúrate de importar la pantalla de carga
 
 export default function HomeScreen({ navigation }) {
   const drawer = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const users = [
     { id: '1', type: 'Punto de venta', name: 'Punto de venta 1' },
@@ -16,6 +18,14 @@ export default function HomeScreen({ navigation }) {
     { id: '4', type: 'Punto de venta', name: 'Caja 2' },
   ];
 
+  const handleLogout = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      navigation.replace('Login');
+    }, 3000);
+  };
+
   return (
     <DrawerLayout
       ref={drawer}
@@ -23,7 +33,7 @@ export default function HomeScreen({ navigation }) {
       drawerPosition="left"
       drawerType="slide"
       drawerBackgroundColor="#7393FC"
-      renderNavigationView={() => <CustomDrawer navigation={navigation} />}
+      renderNavigationView={() => <CustomDrawer navigation={navigation} onLogout={handleLogout} />}
     >
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
@@ -73,6 +83,12 @@ export default function HomeScreen({ navigation }) {
           />
         </View>
       </SafeAreaView>
+
+      {isLoading && (
+        <Modal visible={isLoading} transparent={true}>
+          <LoadingScreen navigation={navigation} />
+        </Modal>
+      )}
     </DrawerLayout>
   );
 }
@@ -119,18 +135,18 @@ const styles = StyleSheet.create({
   activities: {
     marginTop: 30,
     flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
   },
   stats: {
-    marginLeft: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   statText: {
     fontSize: 16,
-    marginBottom: 5,
+    marginTop: 10,
   },
   userList: {
-    marginTop: 30,
+    marginTop: 20,
   },
 });
-
-

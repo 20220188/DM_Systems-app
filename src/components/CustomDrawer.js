@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigationState } from '@react-navigation/native';
 
-const CustomDrawer = ({ navigation }) => {
+const CustomDrawer = ({ navigation, onLogout }) => {
   const [selectedScreen, setSelectedScreen] = useState('');
   const navigationState = useNavigationState(state => state);
 
@@ -63,14 +63,12 @@ const CustomDrawer = ({ navigation }) => {
         <Text style={styles.drawerItemText}>Dependientes</Text>
       </TouchableOpacity>
 
-      
-      
-      <TouchableOpacity style={styles.closeButton} onPress={() => handleNavigation('Login')}>
+      <TouchableOpacity style={styles.closeButton} onPress={onLogout}>
         <Icon name="times-circle" size={24} color="red" />
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   drawerContainer: {
