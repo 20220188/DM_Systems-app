@@ -48,14 +48,6 @@ const CustomDrawer = ({ navigation }) => {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.drawerItem, selectedScreen === 'VistaVenta' && styles.drawerItemSelected]}
-        onPress={() => handleNavigation('VistaVenta')}
-      >
-        <Icon name="star" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Vista de ventas</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
         style={[styles.drawerItem, selectedScreen === 'Caja' && styles.drawerItemSelected]}
         onPress={() => handleNavigation('Caja')}
       >
@@ -71,13 +63,7 @@ const CustomDrawer = ({ navigation }) => {
         <Text style={styles.drawerItemText}>Dependientes</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.drawerItem, selectedScreen === 'Inventario' && styles.drawerItemSelected]}
-        onPress={() => handleNavigation('Inventario')}
-      >
-        <Icon name="star" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Inventario</Text>
-      </TouchableOpacity>
+      
       
       <TouchableOpacity style={styles.closeButton} onPress={() => handleNavigation('Login')}>
         <Icon name="times-circle" size={24} color="red" />

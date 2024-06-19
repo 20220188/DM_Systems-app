@@ -38,19 +38,10 @@ export default function Inventario({ navigation }) {
     const drawer = useRef(null);
 
     return (
-        <DrawerLayout
-            ref={drawer}
-            drawerWidth={300}
-            drawerPosition="left"
-            drawerType="slide"
-            drawerBackgroundColor="#7393FC"
-            renderNavigationView={() => <CustomDrawer navigation={navigation} />}
-        >
+        
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.container}>
-                    <TouchableOpacity style={styles.menuButton} onPress={() => drawer.current.openDrawer()}>
-                        <Icon name="bars" size={24} color="black" />
-                    </TouchableOpacity>
+                    
                     <TextInput
                         style={styles.searchInput}
                         placeholder="Buscar productos..."
@@ -68,10 +59,14 @@ export default function Inventario({ navigation }) {
                                 <Text style={styles.location}>{product.location}</Text>
                             </Card>
                         ))}
+                        
                     </ScrollView>
+                    <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Login')}>
+                        <Text style={styles.buttonText}>Cerrar sesión</Text>
+                        </TouchableOpacity>
                 </View>
             </SafeAreaView>
-        </DrawerLayout>
+        
     );
 }
 
@@ -97,14 +92,27 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         color: 'black',
     },
-    searchInput: {
+    boton: {
+        backgroundColor: 'red',
+        padding: 10,
+        borderRadius: 20,
+        marginVertical: 10,
+        width: '80%',
+        alignItems: 'center',
+      },
+      buttonText: {
+        color: 'white',
+        fontSize: 16,
+      },
+      searchInput: {
         height: 40,
-        borderColor: '#ccc',
+        borderColor: '#000',
         borderWidth: 1,
         borderRadius: 10,
         paddingLeft: 10,
         marginBottom: 20,
         width: '90%',
+        color: 'black',
     },
     scrollContainer: {
         width: '100%',
