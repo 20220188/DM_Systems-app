@@ -53,15 +53,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.divider} />
 
             <TouchableOpacity style={styles.boton} onPress={() => handleLogin('HomeScreen')}>
-              <Text style={styles.buttonText}>Iniciar sesión (Admin)</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('Inventario')}>
-              <Text style={styles.buttonText}>Iniciar sesión (Inventario)</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('VistaVenta')}>
-              <Text style={styles.buttonText}>Iniciar sesión (Ventas)</Text>
+              <Text style={styles.buttonText}>Iniciar sesión</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate('RecuperacionContraseñas')}>
