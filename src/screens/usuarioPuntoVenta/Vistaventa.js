@@ -10,26 +10,26 @@ const products = [
         name: 'Fish Oil Omega 3',
         price: '$20',
         location: 'Bandung',
-        image: '../../img/productos/omega3.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=19AQg4ZWr4VwTqrGOt8QSEHTQP2IARuId',
     },
     {
         name: 'Acetaminofen 500mg',
         price: '$4',
         location: 'Bandung',
-        image: '../../img/productos/acetaminofen.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=1X62GkYbcu0idVZxH93QJ-0Jtzbm7fTEw',
     },
     {
         name: 'Ibuprofeno 250mg',
         price: '$5',
         location: 'Bandung',
-        image: '../../img/productos/ibuprofeno.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=1lpHhBbDukHnwmuJOB2XYiEAgOOsN0tbT',
     },
     {
         name: 'Paracetamol 500mg',
         price: '$2',
         oldPrice: '$5',
         location: 'Bandung',
-        image: '../../img/productos/paracetamol.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=1eBEU74KSsO8CjRcucNJMg7K429VKpmy0',
     },
 
 ];

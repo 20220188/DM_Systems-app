@@ -10,26 +10,28 @@ const products = [
         name: 'Fish Oil Omega 3',
         price: '$20',
         location: 'Bandung',
-        image: '../../img/productos/omega3.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=19AQg4ZWr4VwTqrGOt8QSEHTQP2IARuId',
     },
     {
         name: 'Acetaminofen 500mg',
         price: '$4',
         location: 'Bandung',
-        image: '../../img/productos/acetaminofen.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=1X62GkYbcu0idVZxH93QJ-0Jtzbm7fTEw',
     },
     {
         name: 'Ibuprofeno 250mg',
         price: '$5',
         location: 'Bandung',
-        image: '../../img/productos/ibuprofeno.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=1lpHhBbDukHnwmuJOB2XYiEAgOOsN0tbT',
+
     },
     {
         name: 'Paracetamol 500mg',
         price: '$2',
         oldPrice: '$5',
         location: 'Bandung',
-        image: '../../img/productos/paracetamol.jpg',
+        image: 'https://drive.google.com/uc?export=view&id=1eBEU74KSsO8CjRcucNJMg7K429VKpmy0',
+
     },
 
 ];
@@ -38,35 +40,35 @@ export default function Inventario({ navigation }) {
     const drawer = useRef(null);
 
     return (
-        
-            <SafeAreaView style={styles.safeArea}>
-                <View style={styles.container}>
-                    
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Buscar productos..."
-                    />
-                    <ScrollView style={styles.scrollContainer}>
-                        {products.map((product, index) => (
-                            <Card key={index}>
-                                <Card.Title>{product.name}</Card.Title>
-                                <Card.Divider />
-                                <Card.Image source={{ uri: product.image }} />
-                                <Text style={styles.price}>{product.price}</Text>
-                                {product.oldPrice && (
-                                    <Text style={styles.oldPrice}>{product.oldPrice}</Text>
-                                )}
-                                <Text style={styles.location}>{product.location}</Text>
-                            </Card>
-                        ))}
-                        
-                    </ScrollView>
-                    <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Login')}>
-                        <Text style={styles.buttonText}>Cerrar sesión</Text>
-                        </TouchableOpacity>
-                </View>
-            </SafeAreaView>
-        
+
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Buscar productos..."
+                />
+                <ScrollView style={styles.scrollContainer}>
+                    {products.map((product, index) => (
+                        <Card key={index}>
+                            <Card.Title>{product.name}</Card.Title>
+                            <Card.Divider />
+                            <Card.Image source={{ uri: product.image }} />
+                            <Text style={styles.price}>{product.price}</Text>
+                            {product.oldPrice && (
+                                <Text style={styles.oldPrice}>{product.oldPrice}</Text>
+                            )}
+                            <Text style={styles.location}>{product.location}</Text>
+                        </Card>
+                    ))}
+
+                </ScrollView>
+                <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.buttonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
+
     );
 }
 
@@ -99,12 +101,12 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         width: '80%',
         alignItems: 'center',
-      },
-      buttonText: {
+    },
+    buttonText: {
         color: 'white',
         fontSize: 16,
-      },
-      searchInput: {
+    },
+    searchInput: {
         height: 40,
         borderColor: '#000',
         borderWidth: 1,
