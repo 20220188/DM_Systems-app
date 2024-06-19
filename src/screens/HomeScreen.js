@@ -67,20 +67,7 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
 
-          <FlatList
-            data={users}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <ListItem bottomDivider>
-                <Icon name={item.type === 'Usuario' ? 'user' : 'truck'} size={24} />
-                <ListItem.Content>
-                  <ListItem.Title>{item.type}</ListItem.Title>
-                  <ListItem.Subtitle>{item.name}</ListItem.Subtitle>
-                </ListItem.Content>
-              </ListItem>
-            )}
-            style={styles.userList}
-          />
+          
         </View>
       </SafeAreaView>
 
