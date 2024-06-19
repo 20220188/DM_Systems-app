@@ -3,6 +3,8 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Imag
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function RecuperacionContraseñasScreen({ navigation }) {
+
+  const imageUrl = 'https://drive.google.com/uc?export=view&id=1ZSt3P4ZmTBXGzx0ke0lXX-p6n_Y9EqlF'; // Reemplaza YOUR_FILE_ID con el ID de tu archivo en Google Drive
   const [email, setEmail] = useState('');
 
   const handlePasswordRecovery = () => {
@@ -15,12 +17,13 @@ export default function RecuperacionContraseñasScreen({ navigation }) {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.innerContainer}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Login')}>
               <Icon name="arrow-left" size={24} color="#fff" />
             </TouchableOpacity>
-            <Image source={require('../img/logodm.png')} style={styles.logo} />
+            <Image source={{ uri: imageUrl }} style={styles.image} />
             <Text style={styles.title}>Correo electrónico</Text>
             <TextInput
               style={styles.input}
@@ -65,9 +68,10 @@ const styles = StyleSheet.create({
     top: 10,
     left: 10,
   },
-  logo: {
-    width: 150,
-    height: 150,
+  image: {
+    width: 400, // Aumenta el ancho de la imagen
+    height: 200, // Aumenta la altura de la imagen
+    resizeMode: 'cover',
     marginBottom: 20,
   },
   title: {

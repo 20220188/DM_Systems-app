@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import LoadingScreen from './LoadingScreen'; // Importa la pantalla de carga
 
 export default function Register({ navigation }) {
   const [email, setEmail] = useState('');
@@ -7,9 +8,18 @@ export default function Register({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false); // Estado para controlar la carga
+
+  const imageUrl = 'https://drive.google.com/uc?export=view&id=1ZSt3P4ZmTBXGzx0ke0lXX-p6n_Y9EqlF'; // URL de tu imagen en Google Drive
 
   const handleRegister = () => {
-    // Handle: lógica del registro
+    setLoading(true); // Activa la pantalla de carga
+
+    // Simula una operación asíncrona (por ejemplo, una llamada a API)
+    setTimeout(() => {
+      setLoading(false); // Desactiva la pantalla de carga después de un tiempo simulado
+      navigation.navigate('Login'); // Navega a la pantalla de login después del registro
+    }, 3000); // Simulación de 3 segundos de carga
   };
 
   return (
@@ -17,64 +27,67 @@ export default function Register({ navigation }) {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.container}>
-        <Image source={require('../img/logodm.png')} style={styles.image} />
-        <Text style={styles.title}>Registro</Text>
+      {loading ? ( // Muestra la pantalla de carga si loading es true
+        <LoadingScreen />
+      ) : (
+        <ScrollView contentContainerStyle={styles.container}>
+          <Image source={{ uri: imageUrl }} style={styles.image} />
+          
+          {/* Etiquetas sobre los TextInput */}
+          <Text style={styles.label}>Correo</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese su correo"
+            placeholderTextColor="#aaa"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-        {/* Etiquetas sobre los TextInput */}
-        <Text style={styles.label}>Correo</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su correo"
-          placeholderTextColor="#aaa"
-          value={email}
-          onChangeText={setEmail}
-        />
+          <Text style={styles.label}>Nombre</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese su nombre"
+            placeholderTextColor="#aaa"
+            value={name}
+            onChangeText={setName}
+          />
 
-        <Text style={styles.label}>Nombre</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su nombre"
-          placeholderTextColor="#aaa"
-          value={name}
-          onChangeText={setName}
-        />
+          <Text style={styles.label}>Usuario</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese su usuario"
+            placeholderTextColor="#aaa"
+            value={username}
+            onChangeText={setUsername}
+          />
 
-        <Text style={styles.label}>Usuario</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su usuario"
-          placeholderTextColor="#aaa"
-          value={username}
-          onChangeText={setUsername}
-        />
+          <Text style={styles.label}>Contraseña</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese su contraseña"
+            placeholderTextColor="#aaa"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-        <Text style={styles.label}>Contraseña</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su contraseña"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+          <Text style={styles.label}>Confirmar contraseña</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirme su contraseña"
+            placeholderTextColor="#aaa"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
 
-        <Text style={styles.label}>Confirmar contraseña</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Confirme su contraseña"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
+          <View style={styles.divider} />
 
-        <View style={styles.divider} />
-
-        <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.buttonText}>Registro</Text>
-        </TouchableOpacity>
-      </ScrollView>
+          <TouchableOpacity style={styles.boton} onPress={handleRegister}>
+            <Text style={styles.buttonText}>Registro</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -108,8 +121,8 @@ const styles = StyleSheet.create({
     textAlign: 'center', // Añade textAlign para centrar el texto
   },
   image: {
-    width: 100, // Ajusta el tamaño adecuadamente
-    height: 100, // Ajusta el tamaño adecuadamente
+    width: 400, // Ajusta el tamaño adecuadamente
+    height: 200, // Ajusta el tamaño adecuadamente
     resizeMode: 'cover',
     marginBottom: 20,
   },
@@ -138,5 +151,3 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
-
-

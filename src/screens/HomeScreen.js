@@ -1,13 +1,20 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView,TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../components/CustomDrawer';
+import { Avatar, ListItem } from 'react-native-elements';
+import * as Progress from 'react-native-progress';
 
 export default function HomeScreen({ navigation }) {
-  
-
   const drawer = useRef(null);
+
+  const users = [
+    { id: '1', type: 'Punto de venta', name: 'Punto de venta 1' },
+    { id: '2', type: 'Usuario', name: 'Dependiente' },
+    { id: '3', type: 'Usuario', name: 'Dependiente' },
+    { id: '4', type: 'Punto de venta', name: 'Caja 2' },
+  ];
 
   return (
     <DrawerLayout
@@ -24,14 +31,51 @@ export default function HomeScreen({ navigation }) {
             <Icon name="bars" size={24} color="black" />
           </TouchableOpacity>
           
-          <Text style={styles.title}>Inicio!</Text>
-          <Text style={styles.subtitle}></Text>
+          <View style={styles.header}>
+            <Avatar rounded source={{ uri: 'https://simpleicon.com/wp-content/uploads/user-6.png' }} />
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.headerText}>Bienvenido!</Text>
+              <Text style={styles.adminText}>Admin</Text>
+            </View>
+          </View>
+          <TextInput style={styles.searchBar} placeholder="Buscar..." />
+
+          <View style={styles.activities}>
+            <Progress.Circle
+              size={100}
+              progress={0.75}
+              showsText={true}
+              formatText={() => '75%'}
+            />
+            <View style={styles.stats}>
+              <Text style={styles.statText}>
+                <Icon name="check-circle" size={20} color="green" /> Ingresos 75
+              </Text>
+              <Text style={styles.statText}>
+                <Icon name="times-circle" size={20} color="red" /> Pérdidas 25
+              </Text>
+            </View>
+          </View>
+
+          <FlatList
+            data={users}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <ListItem bottomDivider>
+                <Icon name={item.type === 'Usuario' ? 'user' : 'truck'} size={24} />
+                <ListItem.Content>
+                  <ListItem.Title>{item.type}</ListItem.Title>
+                  <ListItem.Subtitle>{item.name}</ListItem.Subtitle>
+                </ListItem.Content>
+              </ListItem>
+            )}
+            style={styles.userList}
+          />
         </View>
       </SafeAreaView>
     </DrawerLayout>
   );
 }
-
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -40,69 +84,53 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 16,
     backgroundColor: '#D2D9F1',
-    paddingTop: 20,
   },
   menuButton: {
     position: 'absolute',
     top: 10,
     left: 10,
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: 'black',
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#D2D9F1',
-    fontSize: 16,
-  },
-  drawerContainer: {
-    flex: 1,
-    backgroundColor: '#7393FC',
-    paddingTop: 50,
-    paddingHorizontal: 20,
-  },
-  drawerTitle: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: 'black',
-  },
-  drawerItem: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginVertical: 5,
-    backgroundColor: '#7393FC',
-    borderRadius: 5,
+    marginTop: 40,
   },
-  drawerItemSelected: {
-    backgroundColor: '#251C6A',
+  headerTextContainer: {
+    marginLeft: 10,
   },
-  drawerIcon: {
-    marginRight: 10,
-  },
-  drawerItemText: {
+  headerText: {
     fontSize: 18,
-    color: 'white',
+    fontWeight: 'bold',
   },
-  closeButton: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    backgroundColor: '#D2D9F1',
-    borderRadius: 50,
+  adminText: {
+    fontSize: 16,
+    color: 'gray',
+  },
+  searchBar: {
+    marginTop: 20,
     padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  activities: {
+    marginTop: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  stats: {
+    marginLeft: 20,
+  },
+  statText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  userList: {
+    marginTop: 30,
   },
 });
+
+

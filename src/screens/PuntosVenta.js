@@ -1,13 +1,21 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Button } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../components/CustomDrawer';
 
-
-
 export default function PuntosVenta({ navigation }) {
   const drawer = useRef(null);
+
+  const data = [
+    { id: '1', usuario: 'texto', contrasena: 'texto' },
+    { id: '2', usuario: 'texto', contrasena: 'texto' },
+    { id: '3', usuario: 'texto', contrasena: 'texto' },
+    { id: '4', usuario: 'texto', contrasena: 'texto' },
+    { id: '5', usuario: 'texto', contrasena: 'texto' },
+    { id: '6', usuario: 'texto', contrasena: 'texto' },
+    { id: '7', usuario: 'texto', contrasena: 'texto' },
+  ];
 
   return (
     <DrawerLayout
@@ -23,15 +31,45 @@ export default function PuntosVenta({ navigation }) {
           <TouchableOpacity style={styles.menuButton} onPress={() => drawer.current.openDrawer()}>
             <Icon name="bars" size={24} color="black" />
           </TouchableOpacity>
-          
-          <Text style={styles.title}>Puntos de venta!</Text>
-          <Text style={styles.subtitle}></Text>
+
+          <Text style={styles.title}>Puntos de venta</Text>
+          <Icon name="truck" size={50} color="black" style={styles.icon} />
+          <TextInput style={styles.input} placeholder="Usuario" />
+          <TextInput style={styles.input} placeholder="Contraseña" secureTextEntry />
+
+          <View style={styles.tableHeader}>
+            <Text style={styles.tableHeaderText}>Usuario</Text>
+            <Text style={styles.tableHeaderText}>Contraseña</Text>
+          </View>
+
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.tableRow}>
+                <Text style={styles.tableText}>{item.usuario}</Text>
+                <Text style={styles.tableText}>{item.contrasena}</Text>
+              </View>
+            )}
+            style={styles.table}
+          />
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.actionButton}>
+              <Text style={styles.buttonText}>Guardar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton}>
+              <Text style={styles.buttonText}>Editar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton}>
+              <Text style={styles.buttonText}>Borrar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     </DrawerLayout>
   );
 }
-
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -40,7 +78,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#D2D9F1',
     paddingTop: 20,
@@ -55,54 +92,61 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: 'black',
   },
-  button: {
-    backgroundColor: '#007BFF',
+  icon: {
+    marginBottom: 20,
+  },
+  input: {
+    width: '80%',
+    padding: 10,
+    marginVertical: 10,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  table: {
+    width: '90%',
+    marginTop: 20,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#D2D9F1',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  tableHeaderText: {
+    width: '50%',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  tableText: {
+    width: '50%',
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '90%',
+    marginTop: 20,
+  },
+  actionButton: {
+    backgroundColor: '#251C6A',
     padding: 10,
     borderRadius: 5,
-    marginVertical: 10,
-    width: '80%',
+    width: '30%',
     alignItems: 'center',
   },
   buttonText: {
-    color: '#D2D9F1',
-    fontSize: 16,
-  },
-  drawerContainer: {
-    flex: 1,
-    backgroundColor: '#7393FC',
-    paddingTop: 50,
-    paddingHorizontal: 20,
-  },
-  drawerTitle: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: 'black',
-  },
-  drawerItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginVertical: 5,
-    backgroundColor: '#7393FC',
-    borderRadius: 5,
-  },
-  drawerItemSelected: {
-    backgroundColor: '#251C6A',
-  },
-  drawerIcon: {
-    marginRight: 10,
-  },
-  drawerItemText: {
-    fontSize: 18,
     color: 'white',
-  },
-  closeButton: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    backgroundColor: '#D2D9F1',
-    borderRadius: 50,
-    padding: 10,
+    fontSize: 16,
   },
 });

@@ -1,55 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import LoadingScreen from './LoadingScreen'; // Importa la pantalla de carga
 
 export default function LoginScreen({ navigation }) {
+  const [loading, setLoading] = useState(false); // Estado para controlar la carga
+
+  const imageUrl = 'https://drive.google.com/uc?export=view&id=1ZSt3P4ZmTBXGzx0ke0lXX-p6n_Y9EqlF'; // URL de tu imagen en Google Drive
+
+  const handleLogin = (screenName) => {
+    setLoading(true); // Activa la pantalla de carga
+
+    // Simula una operación asíncrona (por ejemplo, una llamada a API)
+    setTimeout(() => {
+      setLoading(false); // Desactiva la pantalla de carga después de un tiempo simulado
+      navigation.navigate(screenName); // Navega a la pantalla correspondiente después del inicio de sesión
+    }, 3000); // Simulación de 3 segundos de carga
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView contentContainerStyle={styles.container}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register')}>
-            <Icon name="arrow-left" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Image source={require('../img/logodm.png')} style={styles.image} />
-          <Text style={styles.title}>D&M Systems</Text>
+        {loading ? ( // Muestra la pantalla de carga si loading es true
+          <LoadingScreen />
+        ) : (
+          <ScrollView contentContainerStyle={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register')}>
+              <Icon name="arrow-left" size={24} color="#fff" />
+            </TouchableOpacity>
 
-          {/* Etiquetas sobre los TextInput */}
-          <Text style={styles.label}>Usuario</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese su usuario"
-            placeholderTextColor="#aaa"
-          />
+            <Image source={{ uri: imageUrl }} style={styles.image} />
 
-          <Text style={styles.label}>Contraseña</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese su contraseña"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-          />
+            {/* Etiquetas sobre los TextInput */}
+            <Text style={styles.label}>Usuario</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ingrese su usuario"
+              placeholderTextColor="#aaa"
+            />
 
-          <View style={styles.divider} />
+            <Text style={styles.label}>Contraseña</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ingrese su contraseña"
+              placeholderTextColor="#aaa"
+              secureTextEntry
+            />
 
-          <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('HomeScreen')}>
-            <Text style={styles.buttonText}>Iniciar sesión (Admin)</Text>
-          </TouchableOpacity>
+            <View style={styles.divider} />
 
-          <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Inventario')} >
-            <Text style={styles.buttonText}>Iniciar sesión (Inventario)</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('HomeScreen')}>
+              <Text style={styles.buttonText}>Iniciar sesión (Admin)</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('VistaVenta')} >
-            <Text style={styles.buttonText}>Iniciar sesión (Ventas)</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('Inventario')}>
+              <Text style={styles.buttonText}>Iniciar sesión (Inventario)</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('RecuperacionContraseñas')}>
-            <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
-          </TouchableOpacity>
-        </ScrollView>
+            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('VistaVenta')}>
+              <Text style={styles.buttonText}>Iniciar sesión (Ventas)</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('RecuperacionContraseñas')}>
+              <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -78,8 +97,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 400, // Ajusta el ancho de la imagen
+    height: 200, // Ajusta la altura de la imagen
     resizeMode: 'cover',
     marginBottom: 20,
   },

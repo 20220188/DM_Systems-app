@@ -35,7 +35,7 @@ const CustomDrawer = ({ navigation }) => {
         style={[styles.drawerItem, selectedScreen === 'Admins' && styles.drawerItemSelected]}
         onPress={() => handleNavigation('Admins')}
       >
-        <Icon name="user" size={24} color="white" style={styles.drawerIcon} />
+        <Icon name="user-circle" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Administradores</Text>
       </TouchableOpacity>
       
@@ -43,7 +43,7 @@ const CustomDrawer = ({ navigation }) => {
         style={[styles.drawerItem, selectedScreen === 'PuntosVenta' && styles.drawerItemSelected]}
         onPress={() => handleNavigation('PuntosVenta')}
       >
-        <Icon name="star" size={24} color="white" style={styles.drawerIcon} />
+        <Icon name="truck" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Puntos de venta</Text>
       </TouchableOpacity>
 
@@ -59,7 +59,7 @@ const CustomDrawer = ({ navigation }) => {
         style={[styles.drawerItem, selectedScreen === 'Dependientes' && styles.drawerItemSelected]}
         onPress={() => handleNavigation('Dependientes')}
       >
-        <Icon name="envelope" size={24} color="white" style={styles.drawerIcon} />
+        <Icon name="user-plus" size={24} color="white" style={styles.drawerIcon} />
         <Text style={styles.drawerItemText}>Dependientes</Text>
       </TouchableOpacity>
 
