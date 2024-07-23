@@ -95,6 +95,30 @@ export default function Register({ navigation }) {
       console.error('Error en la solicitud:', error);
     }
   };
+  const cerrarSesion = async () => {
+    try {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        console.log("Sesión Finalizada");
+        Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
+          }
+        ]);
+      } else {
+        console.log('No se pudo eliminar la sesión');
+      }
+    } catch (error) {
+      console.error('Error desde Catch', error);
+      Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -144,6 +168,10 @@ export default function Register({ navigation }) {
           <Buttons
           textoBoton='Registrar Usuario'
           accionBoton={handleCreate}
+                />
+                <Buttons
+          textoBoton='Cerrar Sesion'
+          accionBoton={cerrarSesion}
                 />
         </ScrollView>
       )}

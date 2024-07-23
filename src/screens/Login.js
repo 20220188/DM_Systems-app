@@ -72,7 +72,7 @@ export default function LoginScreen({ navigation }) {
 
       if (data.status) {
         setContrasenia('')
-        setUsuario('')
+        setAlias('')
         navigation.navigate('HomeScreen');
       } else {
         console.log(data);
@@ -108,11 +108,7 @@ export default function LoginScreen({ navigation }) {
           <LoadingScreen />
         ) : (
           <ScrollView contentContainerStyle={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register')}>
-              <Icon name="arrow-left" size={24} color="#fff" />
-            </TouchableOpacity>
-
-            
+                        
             <Image
             source={require('../img/logodm.png')} // Reemplaza con la URL de la imagen de perfil
             style={styles.profilePic}
@@ -145,6 +141,10 @@ export default function LoginScreen({ navigation }) {
 
             <TouchableOpacity onPress={() => navigation.navigate('RecuperacionContraseñas')}>
               <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => irRegistrar()}>
+              <Text style={styles.forgotPasswordText}>Ir a registro</Text>
             </TouchableOpacity>
           </ScrollView>
         )}
