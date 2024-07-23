@@ -10,7 +10,7 @@ const LoadingScreen = ({ navigation }) => {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      navigation.replace('Register');
+      navigation.replace('Login');
     }, 3000);
 
     return () => {
@@ -41,7 +41,7 @@ const LoadingScreen = ({ navigation }) => {
     <View style={styles.container}>
       
       <Animated.Image
-        source={{ uri: loadIMG }}
+        source={require('../img/icone-chargement-jaune.png')}
         style={[styles.logo, { transform: [{ rotate: spin }] }]}
       />
       

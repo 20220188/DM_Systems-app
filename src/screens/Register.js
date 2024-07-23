@@ -1,25 +1,99 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, Alert } from 'react-native';
 import LoadingScreen from './LoadingScreen'; // Importa la pantalla de carga
+import * as Constantes from '../../utils/constantes';
+import Input from '../components/Inputs/inputs';
+import InputEmail from '../components/Inputs/InputEmail';
+import InputMultiline from '../components/Inputs/InputMultiline';
+import Buttons from '../components/Botones/Buttons';
 
 export default function Register({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const ip = Constantes.IP;
+
+  const [nombre, setNombre] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [alias, setAlias] = useState('');
+  const [clave, setClave] = useState('');
+  const [confirmarClave, setConfirmarClave] = useState('')
+
+
+
   const [loading, setLoading] = useState(false); // Estado para controlar la carga
 
   const imageUrl = 'https://drive.google.com/uc?export=view&id=1ZSt3P4ZmTBXGzx0ke0lXX-p6n_Y9EqlF'; // URL de tu imagen en Google Drive
 
-  const handleRegister = () => {
-    setLoading(true); // Activa la pantalla de carga
+  const handleLogout = async () => {
+    /*
+            try {
+                const response = await fetch(${ip}/coffeeshop/api/services/public/cliente.php?action=logOut, {
+                    method: 'GET'
+                });
+    
+                const data = await response.json();
+    
+                if (data.status) {
+                    navigation.navigate('Sesion');
+                } else {
+                    console.log(data);
+                    // Alert the user about the error
+                    Alert.alert('Error', data.error);
+                }
+            } catch (error) {
+                console.error(error, "Error desde Catch");
+                Alert.alert('Error', 'Ocurrió un error al iniciar sesión con bryancito');
+            } */
+    navigation.navigate('Login');
+  };
 
-    // Simula una operación asíncrona (por ejemplo, una llamada a API)
-    setTimeout(() => {
-      setLoading(false); // Desactiva la pantalla de carga después de un tiempo simulado
-      navigation.navigate('Login'); // Navega a la pantalla de login después del registro
-    }, 3000); // Simulación de 3 segundos de carga
+  const handleCreate = async () => {
+    try {
+      console.log('Iniciando el proceso de creación de usuario');
+
+      // Calcular la fecha mínima permitida (18 años atrás desde la fecha actual)
+      const fechaMinima = new Date();
+      fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
+
+      // Validar los campos
+      if (!nombre.trim() || !correo.trim() || !alias.trim() || !clave.trim() || !confirmarClave.trim()) {
+        Alert.alert("Debes llenar todos los campos");
+        console.log('Faltan campos por llenar');
+        return;
+      } 
+
+      console.log('Todos los campos son válidos');
+
+      // Si todos los campos son válidos, proceder con la creación del usuario
+      const formData = new FormData();
+      formData.append('nombreAdministrador', nombre);
+      formData.append('correoAdministrador', correo);
+      formData.append('aliasAdministrador', alias);
+      formData.append('claveAdministrador', clave);
+      formData.append('confirmarClave', confirmarClave);
+
+      console.log('Datos del formulario:', formData);
+
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=signUpMovil`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      console.log('Respuesta de la API:', data);
+
+      if (data.status) {
+        Alert.alert('Datos Guardados correctamente');
+        setTimeout(() => {
+          setLoading(false); // Desactiva la pantalla de carga después de un tiempo simulado
+          navigation.navigate('Login'); // Navega a la pantalla de login después del registro
+        }, 3000);
+      } else {
+        Alert.alert('Error', data.error);
+      }
+    } catch (error) {
+      Alert.alert('Ocurrió un error al intentar crear el usuario');
+      console.error('Error en la solicitud:', error);
+    }
   };
 
   return (
@@ -31,61 +105,46 @@ export default function Register({ navigation }) {
         <LoadingScreen />
       ) : (
         <ScrollView contentContainerStyle={styles.container}>
-          <Image source={{ uri: imageUrl }} style={styles.image} />
-          
-          {/* Etiquetas sobre los TextInput */}
-          <Text style={styles.label}>Correo</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese su correo"
-            placeholderTextColor="#aaa"
-            value={email}
-            onChangeText={setEmail}
+          <Image
+            source={require('../img/logodm.png')} // Reemplaza con la URL de la imagen de perfil
+            style={styles.profilePic}
           />
 
-          <Text style={styles.label}>Nombre</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese su nombre"
-            placeholderTextColor="#aaa"
-            value={name}
-            onChangeText={setName}
+          <Input
+            placeHolder='Nombre Cliente'
+            setValor={nombre}
+            setTextChange={setNombre}
           />
 
-          <Text style={styles.label}>Usuario</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese su usuario"
-            placeholderTextColor="#aaa"
-            value={username}
-            onChangeText={setUsername}
+          <InputEmail
+            placeHolder='Email Cliente'
+            setValor={correo}
+            setTextChange={setCorreo} />
+
+          <Input
+            placeHolder='Usuario Cliente'
+            setValor={alias}
+            setTextChange={setAlias}
           />
 
-          <Text style={styles.label}>Contraseña</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese su contraseña"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <Input
+            placeHolder='Clave'
+            contra={true}
+            setValor={clave}
+            setTextChange={setClave} />
 
-          <Text style={styles.label}>Confirmar contraseña</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirme su contraseña"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
+          <Input
+            placeHolder='Confirmar Clave'
+            contra={true}
+            setValor={confirmarClave}
+            setTextChange={setConfirmarClave} />
 
           <View style={styles.divider} />
 
-          <TouchableOpacity style={styles.boton} onPress={handleRegister}>
-            <Text style={styles.buttonText}>Registro</Text>
-          </TouchableOpacity>
+          <Buttons
+          textoBoton='Registrar Usuario'
+          accionBoton={handleCreate}
+                />
         </ScrollView>
       )}
     </KeyboardAvoidingView>
@@ -113,6 +172,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#5D41DE',
     fontSize: 16,
+  },
+  profilePic: {
+    width: 400,
+    height: 200,
+    borderRadius: 50,
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,

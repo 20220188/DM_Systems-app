@@ -1,22 +1,102 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useFocusEffect } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen'; // Importa la pantalla de carga
+import * as Constantes from '../../utils/constantes';
+import Input from '../components/Inputs/inputs';
+import InputEmail from '../components/Inputs/InputEmail';
+import InputMultiline from '../components/Inputs/InputMultiline';
+import Buttons from '../components/Botones/Buttons'
 
 export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false); // Estado para controlar la carga
 
-  const imageUrl = 'https://drive.google.com/uc?export=view&id=1ZSt3P4ZmTBXGzx0ke0lXX-p6n_Y9EqlF'; // URL de tu imagen en Google Drive
+  
+  const  ip = Constantes.IP;
+  const [isContra, setIsContra] = React.useState(true);
+  const [alias, setAlias] = React.useState('');
+  const [contrasenia, setContrasenia] = React.useState('');
 
-  const handleLogin = (screenName) => {
-    setLoading(true); // Activa la pantalla de carga
 
-    // Simula una operación asíncrona (por ejemplo, una llamada a API)
-    setTimeout(() => {
-      setLoading(false); // Desactiva la pantalla de carga después de un tiempo simulado
-      navigation.navigate(screenName); // Navega a la pantalla correspondiente después del inicio de sesión
-    }, 3000); // Simulación de 3 segundos de carga
+  // Efecto para cargar los detalles del carrito al cargar la pantalla o al enfocarse en ella
+  useFocusEffect(
+    // La función useFocusEffect ejecuta un efecto cada vez que la pantalla se enfoca.
+    React.useCallback(() => {
+      validarSesion(); // Llama a la función getDetalleCarrito.
+    }, [])
+  );
+  const validarSesion = async () => {
+    try {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=getUser`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.status === 1) {
+        setTimeout(() => {
+          setLoading(false); // Desactiva la pantalla de carga después de un tiempo simulado
+          navigation.navigate('Admins'); // Navega a la pantalla correspondiente después del inicio de sesión
+        }, 3000); // Simulación de 3 segundos de carga
+        console.log("Se ingresa con la sesión activa")
+      } else {
+        console.log("No hay sesión activa")
+        return
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al validar la sesión');
+    }
+  }
+
+
+
+  const handlerLogin = async () => {
+    if (!alias || !contrasenia) {
+      Alert.alert('Error', 'Por favor ingrese su alias y contraseña');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('alias', alias);
+      formData.append('clave', contrasenia);
+
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logIn`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        setContrasenia('')
+        setUsuario('')
+        navigation.navigate('Dashboard');
+      } else {
+        console.log(data);
+        Alert.alert('Error sesión', data.error);
+      }
+    } catch (error) {
+      console.error(error, "Error desde Catch");
+      Alert.alert('Error', 'Ocurrió un error al iniciar sesión');
+    }
   };
+
+  const irRegistrar = async () => {
+    navigation.navigate('Register');
+  };
+
+  const login = async () => {
+    handlerLogin();
+    // Simula una operación asíncrona (por ejemplo, una llamada a API)
+    
+  }
+
+  useEffect(() => { validarSesion() }, [])
+  
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -32,29 +112,28 @@ export default function LoginScreen({ navigation }) {
               <Icon name="arrow-left" size={24} color="#fff" />
             </TouchableOpacity>
 
-            <Image source={{ uri: imageUrl }} style={styles.image} />
+            
+            <Image
+            source={require('../img/logodm.png')} // Reemplaza con la URL de la imagen de perfil
+            style={styles.profilePic}
+          />
 
-            {/* Etiquetas sobre los TextInput */}
-            <Text style={styles.label}>Usuario</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ingrese su usuario"
-              placeholderTextColor="#aaa"
+            <Input
+              placeHolder='Alias'
+              setValor={alias}
+              setTextChange={setAlias}
             />
-
-            <Text style={styles.label}>Contraseña</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ingrese su contraseña"
-              placeholderTextColor="#aaa"
-              secureTextEntry
-            />
+            <Input
+              placeHolder='Contraseña'
+              setValor={contrasenia}
+              setTextChange={setContrasenia}
+              contra={isContra} />
 
             <View style={styles.divider} />
-
-            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('HomeScreen')}>
-              <Text style={styles.buttonText}>Iniciar sesión (Admin)</Text>
-            </TouchableOpacity>
+            <Buttons
+              textoBoton='Iniciar Sesión'
+              accionBoton={login} />
+              
 
             <TouchableOpacity style={styles.boton} onPress={() => handleLogin('VistaVenta')}>
               <Text style={styles.buttonText}>Iniciar sesión (ventas)</Text>
@@ -95,6 +174,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     color: 'white',
+  },
+  profilePic: {
+    width: 400,
+    height: 200,
+    borderRadius: 50,
+    marginBottom: 16,
   },
   image: {
     width: 400, // Ajusta el ancho de la imagen

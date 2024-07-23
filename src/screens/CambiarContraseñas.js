@@ -1,7 +1,7 @@
 // CambiarContraseñas.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+ 
 
 export default function RecuperacionContraseñasScreen({ navigation }) {
 

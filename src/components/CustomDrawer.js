@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import * as Constantes from '../../utils/constantes';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigationState } from '@react-navigation/native';
 
 const CustomDrawer = ({ navigation, onLogout }) => {
   const [selectedScreen, setSelectedScreen] = useState('');
   const navigationState = useNavigationState(state => state);
+  const ip = Constantes.IP;
 
   useEffect(() => {
     if (navigationState) {
@@ -17,6 +19,30 @@ const CustomDrawer = ({ navigation, onLogout }) => {
   const handleNavigation = (screen) => {
     setSelectedScreen(screen);
     navigation.navigate(screen);
+  };
+  const cerrarSesion = async () => {
+    try {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        console.log("Sesión Finalizada");
+        Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
+          }
+        ]);
+      } else {
+        console.log('No se pudo eliminar la sesión');
+      }
+    } catch (error) {
+      console.error('Error desde Catch', error);
+      Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
+    }
   };
 
   return (
@@ -63,9 +89,9 @@ const CustomDrawer = ({ navigation, onLogout }) => {
         <Text style={styles.drawerItemText}>Dependientes</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.closeButton} onPress={onLogout}>
-        <Icon name="times-circle" size={24} color="red" />
-      </TouchableOpacity>
+      <TouchableOpacity style={styles.closeButton} onPress={cerrarSesion}>
+      <Icon name="times-circle" size={24} color="red" />
+        </TouchableOpacity>
     </View>
   );
 };
