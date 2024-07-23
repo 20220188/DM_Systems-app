@@ -73,7 +73,7 @@ export default function LoginScreen({ navigation }) {
       if (data.status) {
         setContrasenia('')
         setUsuario('')
-        navigation.navigate('Dashboard');
+        navigation.navigate('HomeScreen');
       } else {
         console.log(data);
         Alert.alert('Error sesión', data.error);
