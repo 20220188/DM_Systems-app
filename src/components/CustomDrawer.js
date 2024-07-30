@@ -89,6 +89,14 @@ const CustomDrawer = ({ navigation, onLogout }) => {
         <Text style={styles.drawerItemText}>Dependientes</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={[styles.drawerItem, selectedScreen === 'Venta' && styles.drawerItemSelected]}
+        onPress={() => handleNavigation('Venta')}
+      >
+        <Icon name="user-plus" size={24} color="white" style={styles.drawerIcon} />
+        <Text style={styles.drawerItemText}>Vista de venta</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.closeButton} onPress={cerrarSesion}>
       <Icon name="times-circle" size={24} color="red" />
         </TouchableOpacity>
