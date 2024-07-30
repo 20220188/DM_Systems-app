@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#D2D9F1',
-    paddingTop: 20,
+    padding: 20,
   },
   menuButton: {
     position: 'absolute',
