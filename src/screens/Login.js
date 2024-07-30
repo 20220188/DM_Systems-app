@@ -52,37 +52,46 @@ export default function LoginScreen({ navigation }) {
 
 
 
-  const handlerLogin = async () => {
-    if (!alias || !contrasenia) {
-      Alert.alert('Error', 'Por favor ingrese su alias y contraseña');
-      return;
-    }
+const handlerLogin = async () => {
+  if (!alias || !contrasenia) {
+    Alert.alert('Error', 'Por favor ingrese su alias y contraseña');
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('alias', alias);
+    formData.append('clave', contrasenia);
+
+    const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logIn`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const responseText = await response.text(); // Obtenemos la respuesta como texto
+    console.log('Respuesta del servidor:', responseText);
 
     try {
-      const formData = new FormData();
-      formData.append('alias', alias);
-      formData.append('clave', contrasenia);
-
-      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logIn`, {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-
+      const data = JSON.parse(responseText); // Intentamos parsear como JSON
       if (data.status) {
-        setContrasenia('')
-        setAlias('')
+        setContrasenia('');
+        setAlias('');
         navigation.navigate('HomeScreen');
       } else {
         console.log(data);
         Alert.alert('Error sesión', data.error);
       }
-    } catch (error) {
-      console.error(error, "Error desde Catch");
-      Alert.alert('Error', 'Ocurrió un error al iniciar sesión');
+    } catch (parseError) {
+      // Si la respuesta no es un JSON válido, mostramos el error de parseo
+      console.error('Error al parsear JSON:', parseError);
+      Alert.alert('Error', 'Respuesta inesperada del servidor.');
     }
-  };
+  } catch (error) {
+    console.error('Error en la solicitud:', error);
+    Alert.alert('Error', 'Ocurrió un error al iniciar sesión');
+  }
+};
+
 
   const irRegistrar = async () => {
     navigation.navigate('Register');

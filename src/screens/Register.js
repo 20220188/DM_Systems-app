@@ -13,6 +13,8 @@ export default function Register({ navigation }) {
 
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
+  const [dui, setDui] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [alias, setAlias] = useState('');
   const [clave, setClave] = useState('');
   const [confirmarClave, setConfirmarClave] = useState('')
@@ -47,54 +49,60 @@ export default function Register({ navigation }) {
   };
 
   const handleCreate = async () => {
+    console.log('Iniciando el proceso de creación de usuario');
+  
+    const fechaMinima = new Date();
+    fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
+  
+    if (!nombre.trim() || !correo.trim() || !dui.trim() || !telefono.trim() || !alias.trim() || !clave.trim() || !confirmarClave.trim()) {
+      Alert.alert("Debe llenar todos los campos");
+      console.log('Faltan campos por llenar');
+      return;
+    }
+    console.log('Todos los campos son válidos');
+  
+    if (clave !== confirmarClave) {
+      Alert.alert('Las contraseñas no coinciden');
+      setAlertVisible(true);
+      return;
+    }
+  
     try {
-      console.log('Iniciando el proceso de creación de usuario');
-
-      // Calcular la fecha mínima permitida (18 años atrás desde la fecha actual)
-      const fechaMinima = new Date();
-      fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
-
-      // Validar los campos
-      if (!nombre.trim() || !correo.trim() || !alias.trim() || !clave.trim() || !confirmarClave.trim()) {
-        Alert.alert("Debes llenar todos los campos");
-        console.log('Faltan campos por llenar');
-        return;
-      } 
-
-      console.log('Todos los campos son válidos');
-
-      // Si todos los campos son válidos, proceder con la creación del usuario
       const formData = new FormData();
       formData.append('nombreAdministrador', nombre);
       formData.append('correoAdministrador', correo);
+      formData.append('duiUsuario', dui);
+      formData.append('telefonoUsuario', telefono);
       formData.append('aliasAdministrador', alias);
       formData.append('claveAdministrador', clave);
       formData.append('confirmarClave', confirmarClave);
-
+  
       console.log('Datos del formulario:', formData);
-
+  
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=signUpMovil`, {
         method: 'POST',
         body: formData
       });
-
-      const data = await response.json();
-      console.log('Respuesta de la API:', data);
-
-      if (data.status) {
+  
+      const responseText = await response.text();
+      console.log('Respuesta del servidor:', responseText);
+  
+      if (response.ok) {
         Alert.alert('Datos Guardados correctamente');
         setTimeout(() => {
-          setLoading(false); // Desactiva la pantalla de carga después de un tiempo simulado
-          navigation.navigate('Login'); // Navega a la pantalla de login después del registro
+          setLoading(false);
+          navigation.navigate('Login');
         }, 3000);
       } else {
-        Alert.alert('Error', data.error);
+        Alert.alert('Error en la respuesta del servidor', responseText);
       }
     } catch (error) {
       Alert.alert('Ocurrió un error al intentar crear el usuario');
       console.error('Error en la solicitud:', error);
     }
   };
+  
+
   const cerrarSesion = async () => {
     try {
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
@@ -144,6 +152,18 @@ export default function Register({ navigation }) {
             placeHolder='Email Cliente'
             setValor={correo}
             setTextChange={setCorreo} />
+
+          <Input
+            placeHolder='Dui Cliente'
+            setValor={dui}
+            setTextChange={setDui}
+          />
+
+          <Input
+            placeHolder='Telefono Cliente'
+            setValor={telefono}
+            setTextChange={setTelefono}
+          />
 
           <Input
             placeHolder='Usuario Cliente'

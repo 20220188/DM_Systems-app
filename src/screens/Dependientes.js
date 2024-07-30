@@ -93,10 +93,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#D2D9F1',
   },
   container: {
+    marginTop: 30,
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#D2D9F1',
-    paddingTop: 20,
+    padding: 20,
   },
   menuButton: {
     position: 'absolute',
