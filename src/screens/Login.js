@@ -124,8 +124,7 @@ export default function LoginScreen({ navigation }) {
               placeHolder='Alias'
               setValor={alias}
               setTextChange={setAlias}
-              placeholderColor='#FF6347' // Cambia el color del placeholder aquí
-            />
+            />            
             
             <View style={styles.inputContainer}>
               <TextInput
