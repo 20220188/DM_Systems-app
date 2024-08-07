@@ -1,23 +1,24 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Modal } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Modal, Alert } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../components/CustomDrawer';
 import LoadingScreen from './LoadingScreen';
+import Constantes from '../config/Constantes'; // Ajusta la importación según tu configuración
 
 export default function PuntosVenta({ navigation }) {
+  const ip = Constantes.IP;
+
   const drawer = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [usuario, setUsuario] = useState('');
+  const [contrasena, setContrasena] = useState('');
+  const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
 
-  const data = [
-    { id: '1', usuario: 'texto', contrasena: 'texto' },
-    { id: '2', usuario: 'texto', contrasena: 'texto' },
-    { id: '3', usuario: 'texto', contrasena: 'texto' },
-    { id: '4', usuario: 'texto', contrasena: 'texto' },
-    { id: '5', usuario: 'texto', contrasena: 'texto' },
-    { id: '6', usuario: 'texto', contrasena: 'texto' },
-    { id: '7', usuario: 'texto', contrasena: 'texto' },
-  ];
+  // Llama a obtenerUsuarios cuando el componente se monte
+  useEffect(() => {
+    obtenerUsuarios();
+  }, []);
 
   const handleLogout = () => {
     setIsLoading(true);
@@ -25,6 +26,159 @@ export default function PuntosVenta({ navigation }) {
       setIsLoading(false);
       navigation.replace('Login');
     }, 3000);
+  };
+
+  const obtenerUsuarios = async () => {
+    try {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=readAll`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Datos de puntos de venta:', data);
+
+      if (data.dataset && Array.isArray(data.dataset)) {
+        setUsuarios(data.dataset);
+      } else {
+        console.error('La propiedad dataset no es un array:', data);
+        Alert.alert('Error', 'La respuesta del servidor no es válida');
+      }
+    } catch (error) {
+      console.error('Error al obtener los puntos de venta:', error);
+      Alert.alert('Error', 'Error al obtener los puntos de venta');
+    }
+  };
+
+  const agregarPuntoVenta = async () => {
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('nombrePuntoVenta', usuario);
+      formData.append('contrasenaPuntoVenta', contrasena);
+
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=createRow`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const textResponse = await response.text();
+      console.log('Response text:', textResponse);
+
+      if (response.headers.get('content-type')?.includes('application/json')) {
+        const responseData = JSON.parse(textResponse);
+
+        if (responseData.status === 1) {
+          setUsuario('');
+          setContrasena('');
+          Alert.alert('Éxito', 'Punto de venta agregado correctamente');
+          obtenerUsuarios(); // Actualiza la lista de puntos de venta después de agregar uno nuevo
+        } else {
+          Alert.alert('Error', responseData.error || 'Error al agregar el punto de venta');
+        }
+      } else {
+        console.error('Unexpected response type:', textResponse);
+        Alert.alert('Error', 'Unexpected response type from server');
+      }
+    } catch (error) {
+      console.error('Error al enviar la solicitud:', error);
+      Alert.alert('Error', 'Error al enviar la solicitud: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!updateData) {
+      Alert.alert('Error', 'No se encontraron datos para actualizar.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('idPuntoVenta', updateData.id);
+      formData.append('nombrePuntoVenta', usuario);
+      formData.append('contrasenaPuntoVenta', contrasena);
+
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=updateRow`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const responseData = await response.json();
+      console.log('Response:', responseData);
+
+      if (responseData.status === 1) {
+        Alert.alert('Éxito', 'Punto de venta actualizado correctamente');
+        obtenerUsuarios(); // Actualiza la lista de puntos de venta después de la actualización
+        setUpdateData(null); // Limpia los datos de edición
+        // Limpia los campos del formulario después de la actualización
+        setUsuario('');
+        setContrasena('');
+      } else {
+        Alert.alert('Error', responseData.error || 'Error al actualizar el punto de venta');
+      }
+    } catch (error) {
+      console.error('Error al enviar la solicitud de actualización:', error);
+      Alert.alert('Error', 'Error al enviar la solicitud de actualización: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const eliminarUsuario = async (id_puntoVenta) => {
+    // Mostrar el diálogo de confirmación
+    Alert.alert(
+      'Confirmación de Eliminación',
+      '¿Estás seguro de que deseas eliminar este punto de venta?',
+      [
+        {
+          text: 'No',
+          onPress: () => console.log('Cancelado'),
+          style: 'cancel',
+        },
+        {
+          text: 'Sí',
+          onPress: async () => {
+            // Continuar con la eliminación si el usuario confirma
+            try {
+              const formData = new FormData();
+              formData.append('idPuntoVenta', id_puntoVenta);
+
+              console.log("EN ELIMINAR", id_puntoVenta);
+
+              const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=deleteRow`, {
+                method: 'POST',
+                body: formData
+              });
+
+              if (response.ok) {
+                const responseData = await response.json();
+                console.log('Respuesta de eliminación:', responseData);
+
+                if (responseData.status === 1) {
+                  Alert.alert('Éxito', 'Registro eliminado correctamente');
+                  obtenerUsuarios(); // Actualizar la lista de puntos de venta
+                } else {
+                  console.error('Error al eliminar el punto de venta:', responseData.error || 'Error desconocido');
+                  Alert.alert('Error', responseData.error || 'Error al eliminar el punto de venta');
+                }
+              } else {
+                console.error('Error al eliminar el punto de venta:', response.status);
+                Alert.alert('Error', 'Error al eliminar el punto de venta: ' + response.status);
+              }
+            } catch (error) {
+              console.error('Error al realizar la solicitud de eliminación:', error);
+              Alert.alert('Error', 'Error al realizar la solicitud de eliminación: ' + error.message);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
