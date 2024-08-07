@@ -48,11 +48,10 @@ export default function HomeScreen({ navigation }) {
   );
 
   const handleLogout = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    
+    
       navigation.replace('Login');
-    }, 3000);
+    
   };
 
   return (
