@@ -4,7 +4,7 @@ import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../components/CustomDrawer';
 import LoadingScreen from './LoadingScreen';
-import Constantes from '../config/Constantes'; // Ajusta la importación según tu configuración
+import * as Constantes from '../../utils/constantes';
 
 export default function PuntosVenta({ navigation }) {
   const ip = Constantes.IP;
@@ -30,7 +30,7 @@ export default function PuntosVenta({ navigation }) {
 
   const obtenerUsuarios = async () => {
     try {
-      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=readAll`);
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=readAll`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -58,7 +58,7 @@ export default function PuntosVenta({ navigation }) {
       formData.append('nombrePuntoVenta', usuario);
       formData.append('contrasenaPuntoVenta', contrasena);
 
-      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=createRow`, {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=createRow`, {
         method: 'POST',
         body: formData,
       });
@@ -103,7 +103,7 @@ export default function PuntosVenta({ navigation }) {
       formData.append('nombrePuntoVenta', usuario);
       formData.append('contrasenaPuntoVenta', contrasena);
 
-      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=updateRow`, {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=updateRow`, {
         method: 'POST',
         body: formData,
       });
@@ -150,7 +150,7 @@ export default function PuntosVenta({ navigation }) {
 
               console.log("EN ELIMINAR", id_puntoVenta);
 
-              const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_puntosventa.php?action=deleteRow`, {
+              const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=deleteRow`, {
                 method: 'POST',
                 body: formData
               });
