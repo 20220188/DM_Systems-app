@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const PuntosVentaCard = ({ usuario, contrasena, onEdit, onDelete }) => {
+const PuntosVentaCard = ({ id_punto_venta, punto_venta, clave, onEdit, onDelete }) => {
     return (
         <View style={styles.card}>
-            <Text style={styles.cardTitle}>{usuario}</Text>
-            <Text style={styles.cardText}>{contrasena}</Text>
+            <Text style={styles.cardTitle}>{id_punto_venta}</Text>
+            <Text style={styles.cardTitle}>{punto_venta}</Text>
+            <Text style={styles.cardText}>{clave}</Text>
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={onEdit}>

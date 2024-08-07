@@ -1,17 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Modal, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Modal, ScrollView } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import * as Constantes from '../../utils/constantes';
 import CustomDrawer from '../components/CustomDrawer';
 import LoadingScreen from './LoadingScreen';
-import * as Constantes from '../../utils/constantes';
-
 export default function PuntosVenta({ navigation }) {
   const ip = Constantes.IP;
 
   const drawer = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [usuario, setUsuario] = useState('');
+  const [usuarios, setUsuarios] = useState([]);
+  const [puntoVenta, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
 
@@ -55,8 +55,10 @@ export default function PuntosVenta({ navigation }) {
     setIsLoading(true);
     try {
       const formData = new FormData();
-      formData.append('nombrePuntoVenta', usuario);
-      formData.append('contrasenaPuntoVenta', contrasena);
+      formData.append('nombrePuntoVenta', puntoVenta);
+      formData.append('clavePuntoVenta', contrasena);
+
+
 
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=createRow`, {
         method: 'POST',
@@ -99,9 +101,9 @@ export default function PuntosVenta({ navigation }) {
 
     try {
       const formData = new FormData();
-      formData.append('idPuntoVenta', updateData.id);
-      formData.append('nombrePuntoVenta', usuario);
-      formData.append('contrasenaPuntoVenta', contrasena);
+      formData.append('idPuntoVenta', updateData.id_punto_venta);
+      formData.append('nombrePuntoVenta', puntoVenta);
+      formData.append('clavePuntoVenta', contrasena);
 
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=updateRow`, {
         method: 'POST',
@@ -129,7 +131,7 @@ export default function PuntosVenta({ navigation }) {
     }
   };
 
-  const eliminarUsuario = async (id_puntoVenta) => {
+  const eliminarUsuario = async (id_punto_venta) => {
     // Mostrar el diálogo de confirmación
     Alert.alert(
       'Confirmación de Eliminación',
@@ -146,9 +148,9 @@ export default function PuntosVenta({ navigation }) {
             // Continuar con la eliminación si el usuario confirma
             try {
               const formData = new FormData();
-              formData.append('idPuntoVenta', id_puntoVenta);
+              formData.append('idPuntoVenta', id_punto_venta);
 
-              console.log("EN ELIMINAR", id_puntoVenta);
+              console.log("EN ELIMINAR", id_punto_venta);
 
               const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=deleteRow`, {
                 method: 'POST',
@@ -190,51 +192,68 @@ export default function PuntosVenta({ navigation }) {
       drawerBackgroundColor="#7393FC"
       renderNavigationView={() => <CustomDrawer navigation={navigation} onLogout={handleLogout} />}
     >
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => drawer.current.openDrawer()}>
-            <Icon name="bars" size={24} color="black" />
-          </TouchableOpacity>
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => drawer.current.openDrawer()}>
+          <Icon name="bars" size={24} color="black" />
+        </TouchableOpacity>
 
-          <Text style={styles.title}>Puntos de venta</Text>
+
+
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+
+          <Text style={[styles.title, styles.titleMargin]}>Crear Puntos de venta</Text>
           <Icon name="truck" size={50} color="black" style={styles.icon} />
-          <TextInput style={styles.input} placeholder="Usuario" />
-          <TextInput style={styles.input} placeholder="Contraseña" secureTextEntry />
 
-          <View style={styles.tableHeader}>
-            <Text style={styles.tableHeaderText}>Usuario</Text>
-            <Text style={styles.tableHeaderText}>Contraseña</Text>
-          </View>
-
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.tableRow}>
-                <Text style={styles.tableText}>{item.usuario}</Text>
-                <Text style={styles.tableText}>{item.contrasena}</Text>
-              </View>
-            )}
-            style={styles.table}
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre"
+            value={puntoVenta}
+            onChangeText={setUsuario}
           />
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.buttonText}>Guardar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.buttonText}>Editar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.buttonText}>Borrar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            value={contrasena}
+            onChangeText={setContrasena}
+
+          />
+          {usuarios.map((puntoVenta) => (
+            <View key={puntoVenta.id_punto_venta} style={styles.card}>
+              <Text style={styles.cardTitle}>{puntoVenta.punto_venta}</Text>
+              <View style={styles.cardButtons}>
+                <TouchableOpacity
+                  style={[styles.cardButton, styles.editButton]}
+                  onPress={() => {
+                    setUpdateData(puntoVenta); // Establecer datos para actualizar
+                    setUsuario(puntoVenta.punto_venta);
+                    setContrasena(puntoVenta.contrasena); // Asegúrate de que este campo exista en tu respuesta JSON
+                  }}
+                >
+                  <Text style={styles.cardButtonText}>Actualizar</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.cardButton, styles.deleteButton]}
+                  onPress={() => eliminarUsuario(puntoVenta.id_punto_venta)}
+                >
+                  <Text style={styles.cardButtonText}>Eliminar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+
+
+        </ScrollView>
+
+        <TouchableOpacity style={styles.button} onPress={updateData ? handleUpdate : agregarPuntoVenta}>
+          <Text style={styles.buttonText}>{updateData ? 'Actualizar punto de venta' : 'Agregar punto de venta'}</Text>
+        </TouchableOpacity>
+      </View>
 
       {isLoading && (
         <Modal visible={isLoading} transparent={true}>
-          <LoadingScreen navigation={navigation} />
+          <LoadingScreen />
         </Modal>
       )}
     </DrawerLayout>
@@ -242,82 +261,129 @@ export default function PuntosVenta({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#D2D9F1',
-  },
   container: {
-    marginTop: 30,
     flex: 1,
-    alignItems: 'center',
     backgroundColor: '#D2D9F1',
-    padding: 20,
+    paddingBottom: 80, // Para evitar que el botón se sobreponga al contenido
   },
-  menuButton: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   title: {
     fontSize: 24,
-    marginBottom: 20,
     color: 'black',
+    fontWeight: 'bold',
+  },
+  titleMargin: {
+    marginTop: 50, // Ajusta este valor según tus necesidades
+    marginBottom: 20,
+  },
+  depentientesContainer: {
+    marginLeft: 90,
+    marginTop: 15
   },
   icon: {
-    marginBottom: 20,
+    marginLeft: 10
   },
   input: {
-    width: '80%',
-    padding: 10,
-    marginVertical: 10,
-    backgroundColor: 'white',
-    borderRadius: 8,
+    width: '100%',
+    padding: 12,
+    marginVertical: 5,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
     borderColor: '#ddd',
     borderWidth: 1,
   },
-  table: {
-    width: '90%',
-    marginTop: 20,
+  inputError: {
+    borderColor: 'red',
   },
-  tableHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#D2D9F1',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
-  tableHeaderText: {
-    width: '50%',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  tableRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  tableText: {
-    width: '50%',
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '90%',
-    marginTop: 20,
-  },
-  actionButton: {
+  button: {
     backgroundColor: '#251C6A',
-    padding: 10,
-    borderRadius: 5,
-    width: '30%',
+    padding: 19,
+    borderRadius: 25,
+    width: '90%',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
+  },
+  picker: {
+    width: '100%',
+    padding: 10,
+    marginVertical: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 30,
+    borderColor: '#ddd',
+    borderWidth: 3,
+  },
+  menuButton: {
+    position: 'absolute',
+    top: 45,
+    left: 10,
+    zIndex: 1,
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 15,
+    marginVertical: 10,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  cardText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  cardButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  cardButton: {
+    padding: 10,
+    borderRadius: 10,
+    width: '45%',
+    alignItems: 'center',
+  },
+  editButton: {
+    backgroundColor: '#4CAF50',
+  },
+  deleteButton: {
+    backgroundColor: '#F44336',
+  },
+  cardButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 14,
   },
 });
