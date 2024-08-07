@@ -366,7 +366,7 @@ export default function Admin({ navigation }) {
         </ScrollView>
 
         <TouchableOpacity style={styles.button} onPress={agregarAdministrador}>
-          <Text style={styles.buttonText}>Agregar Administrador</Text>
+          <Text style={styles.buttonText}>Agregar Usuario</Text>
         </TouchableOpacity>
       </View>
 

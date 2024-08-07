@@ -62,7 +62,7 @@ const CustomDrawer = ({ navigation, onLogout }) => {
         onPress={() => handleNavigation('Admins')}
       >
         <Icon name="user-circle" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Administradores</Text>
+        <Text style={styles.drawerItemText}>Usuarios</Text>
       </TouchableOpacity>
       
       <TouchableOpacity
