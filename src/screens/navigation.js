@@ -10,7 +10,6 @@ import Admins from './Admins';
 import Inicio from './HomeScreen';
 import Puntos from './PuntosVenta';
 import Venta from './Venta';
-import Caja from './Caja';
 import Inventario from './Inventario/inventario';
 import Vistaventa from './usuarioPuntoVenta/Vistaventa';
 import Dependientes from './Dependientes';
@@ -30,7 +29,6 @@ function AppNavigator() {
         <Stack.Screen name="Admins" component={Admins} options={{ headerShown: false }} />
         <Stack.Screen name="HomeScreen" component={Inicio} options={{ headerShown: false }} />
         <Stack.Screen name="PuntosVenta" component={Puntos} options={{ headerShown: false }} />
-        <Stack.Screen name="Caja" component={Caja} options={{ headerShown: false }} />
         <Stack.Screen name="Venta" component={Venta} options={{ headerShown: false }} />
         <Stack.Screen name="Inventario" component={Inventario} options={{ headerShown: false }} />
         <Stack.Screen name="VistaVenta" component={Vistaventa} options={{ headerShown: false }} />

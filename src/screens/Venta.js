@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, FlatList, Image, Modal } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Image, FlatList, Modal, Alert } from 'react-native';
 import * as Constantes from '../../utils/constantes';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import CustomDrawer from '../components/CustomDrawer';
@@ -163,48 +163,5 @@ const styles = StyleSheet.create({
     productsContainer: {
         paddingHorizontal: 20,
         paddingTop: 20,
-    },
-    bottomTabContainer: {
-        flexDirection: 'row',
-        height: 70,
-        backgroundColor: '#D9D9D9',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        marginBottom: 0,
-    },
-    tabItem: {
-        alignItems: 'center',
-    },
-    tabText: {
-        fontFamily: 'Poppins-Regular',
-    },
-    categoryScrollContainer: {
-        paddingHorizontal: 10,
-        justifyContent: 'center',
-    },
-    categoryItem: {
-        marginRight: 10,
-        alignItems: 'center',
-    },
-    selectedCategory: {
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    },
-    categoryText: {
-        fontFamily: 'Poppins-Regular',
-        marginTop: 5,
-    },
-    selectedText: {
-        color: 'red',
-    },
-    sportItem: {
-        marginRight: 10,
-        alignItems: 'center',
-    },
-    selectedSport: {
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    },
-    sportText: {
-        fontFamily: 'Poppins-Regular',
-        marginTop: 5,
     },
 });

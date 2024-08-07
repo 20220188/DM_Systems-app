@@ -143,30 +143,30 @@ export default function Register({ navigation }) {
           />
 
           <Input
-            placeHolder='Nombre Cliente'
+            placeHolder='Nombre '
             setValor={nombre}
             setTextChange={setNombre}
           />
 
           <InputEmail
-            placeHolder='Email Cliente'
+            placeHolder='Email '
             setValor={correo}
             setTextChange={setCorreo} />
 
           <Input
-            placeHolder='Dui Cliente'
+            placeHolder='Dui '
             setValor={dui}
             setTextChange={setDui}
           />
 
           <Input
-            placeHolder='Telefono Cliente'
+            placeHolder='Telefono '
             setValor={telefono}
             setTextChange={setTelefono}
           />
 
           <Input
-            placeHolder='Usuario Cliente'
+            placeHolder='Usuario '
             setValor={alias}
             setTextChange={setAlias}
           />
@@ -188,10 +188,6 @@ export default function Register({ navigation }) {
           <Buttons
           textoBoton='Registrar Usuario'
           accionBoton={handleCreate}
-                />
-                <Buttons
-          textoBoton='Cerrar Sesion'
-          accionBoton={cerrarSesion}
                 />
         </ScrollView>
       )}

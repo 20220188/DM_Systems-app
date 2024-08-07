@@ -74,14 +74,6 @@ const CustomDrawer = ({ navigation, onLogout }) => {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.drawerItem, selectedScreen === 'Caja' && styles.drawerItemSelected]}
-        onPress={() => handleNavigation('Caja')}
-      >
-        <Icon name="cog" size={24} color="white" style={styles.drawerIcon} />
-        <Text style={styles.drawerItemText}>Caja</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
         style={[styles.drawerItem, selectedScreen === 'Dependientes' && styles.drawerItemSelected]}
         onPress={() => handleNavigation('Dependientes')}
       >

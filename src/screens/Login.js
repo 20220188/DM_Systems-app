@@ -150,11 +150,11 @@ export default function LoginScreen({ navigation }) {
               accionBoton={handlerLogin}
             />
 
-            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('VistaVenta')}>
+            <TouchableOpacity style={styles.boton} onPress={() => ('VistaVenta')}>
               <Text style={styles.buttonText}>Iniciar sesión (ventas)</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.boton} onPress={() => handleLogin('Inventario')}>
+            <TouchableOpacity style={styles.boton} onPress={() => ('Inventario')}>
               <Text style={styles.buttonText}>Iniciar sesión (inventario) </Text>
             </TouchableOpacity>
 

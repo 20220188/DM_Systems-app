@@ -8,14 +8,14 @@
 //export const IP = 'http://10.10.0.66';
 
 //IP JP casa
-export const IP = 'http://192.168.0.3';
+//export const IP = 'http://192.168.0.3';
 
 
 //IP lab de Will Musun
 //export const IP = 'http://10.10.2.108';
 
 //IP Musun
-//export const IP = 'http://192.168.1.18';
+export const IP = 'http://192.168.1.21';
 
 //export const IP = 'http://172.20.10.10';
 
