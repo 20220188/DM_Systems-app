@@ -92,7 +92,7 @@ export default function Venta({ navigation }) {
         >
             <View style={styles.container}>
                 <View style={styles.searchContainer}>
-                    <Image source={require('../img/textodm.png')} style={styles.logo} />
+                    <Image source={require('../img/logo2.jpg')} style={styles.logo} />
                     <TextInput
                         style={styles.searchText}
                         placeholder="Buscar..."
@@ -126,7 +126,7 @@ export default function Venta({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#D2D9F1',
     },
     searchContainer: {
         flexDirection: 'row',
@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontFamily: 'Poppins-Regular',
         marginLeft: 15,
+        textAlign: 'center',
     },
     sectionTitle: {
         fontSize: 20,
