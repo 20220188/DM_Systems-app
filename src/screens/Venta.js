@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, Image, FlatList, Modal, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Image, FlatList, Alert, Button, TouchableOpacity } from 'react-native';
 import * as Constantes from '../../utils/constantes';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import CustomDrawer from '../components/CustomDrawer';
@@ -69,6 +69,31 @@ export default function Venta({ navigation }) {
         fetchProducts();
     }, []);
 
+    const cerrarSesion = async () => {
+        try {
+          const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
+            method: 'GET'
+          });
+    
+          const data = await response.json();
+    
+          if (data.status) {
+            console.log("Sesión Finalizada");
+            Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
+              {
+                text: "OK",
+                onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
+              }
+            ]);
+          } else {
+            console.log('No se pudo eliminar la sesión');
+          }
+        } catch (error) {
+          console.error('Error desde Catch', error);
+          Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
+        }
+      };
+
     const handleSearch = (query) => {
         setSearchQuery(query);
         if (query) {
@@ -82,44 +107,32 @@ export default function Venta({ navigation }) {
     };
 
     return (
-        <DrawerLayout
-            ref={drawer}
-            drawerWidth={300}
-            drawerPosition="left"
-            drawerType="slide"
-            drawerBackgroundColor="#7393FC"
-            renderNavigationView={() => <CustomDrawer navigation={navigation} onLogout={handleLogout} />}
-        >
-            <View style={styles.container}>
-                <View style={styles.searchContainer}>
-                    <Image source={require('../img/logo2.jpg')} style={styles.logo} />
-                    <TextInput
-                        style={styles.searchText}
-                        placeholder="Buscar..."
-                        value={searchQuery}
-                        onChangeText={handleSearch}
-                    />
-                </View>
-                <FlatList
-                    ListHeaderComponent={
-                        <>
-                            <Text style={styles.welcomeText}>Bienvenido, {userName}</Text>
-                            <Text style={styles.sectionTitle}>Productos</Text>
-                        </>
-                    }
-                    data={filteredProducts}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id_producto.toString()}
-                    contentContainerStyle={styles.productsContainer}
+        <View style={styles.container}>
+            <View style={styles.searchContainer}>
+                <Image source={require('../img/logo2.jpg')} style={styles.logo} />
+                <TextInput
+                    style={styles.searchText}
+                    placeholder="Buscar..."
+                    value={searchQuery}
+                    onChangeText={handleSearch}
                 />
             </View>
-
-            {isLoading && (
-                <Modal visible={isLoading} transparent={true}>
-                    <LoadingScreen />
-                </Modal>
-            )}
-        </DrawerLayout>
+            <FlatList
+                ListHeaderComponent={
+                    <>
+                        <Text style={styles.welcomeText}>Bienvenido, {userName}</Text>
+                        <Text style={styles.sectionTitle}>Productos</Text>
+                    </>
+                }
+                data={filteredProducts}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id_producto.toString()}
+                contentContainerStyle={styles.productsContainer}
+            />
+            <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
+                <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
+            </TouchableOpacity>
+        </View>
     );
 }
 
@@ -164,5 +177,19 @@ const styles = StyleSheet.create({
     productsContainer: {
         paddingHorizontal: 20,
         paddingTop: 20,
+    },
+    logoutButton: {
+        backgroundColor: '#ff6347',
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 20,
+    },
+    logoutButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontFamily: 'Poppins-Regular',
     },
 });

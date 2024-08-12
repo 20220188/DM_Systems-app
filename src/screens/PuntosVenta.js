@@ -242,9 +242,8 @@ export default function PuntosVenta({ navigation }) {
               </View>
             </View>
           ))}
-
-
-        </ScrollView>
+          
+          </ScrollView>
 
         <TouchableOpacity style={styles.button} onPress={updateData ? handleUpdate : agregarPuntoVenta}>
           <Text style={styles.buttonText}>{updateData ? 'Actualizar punto de venta' : 'Agregar punto de venta'}</Text>

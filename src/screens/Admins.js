@@ -23,6 +23,8 @@ export default function Admin({ navigation }) {
   const [usuarios, setUsuarios] = useState([]);
   const [showClave, setShowClave] = useState(false);
   const [showConfirmarClave, setShowConfirmarClave] = useState(false);
+  
+  const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
 
   const ip = Constantes.IP;
 

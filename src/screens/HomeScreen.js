@@ -14,11 +14,27 @@ export default function HomeScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [dependientes, setDependientes] = useState([]);
   const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+  const [userName, setUserName] = useState('');
   const ip = Constantes.IP;
 
   useEffect(() => {
     fetchDependientes();
+    fetchUserProfile();
   }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+        const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=readProfile`);
+        const data = await response.json();
+        if (data.status) {
+            setUserName(data.dataset.nombre);
+        } else {
+            Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
+        }
+    } catch (error) {
+        Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
+    }
+};
 
   const fetchDependientes = async () => {
     setIsLoading(true);
@@ -69,11 +85,8 @@ export default function HomeScreen({ navigation }) {
             <Icon name="bars" size={24} color="black" />
           </TouchableOpacity>
           
-          <View style={styles.header}>
-            <Avatar rounded source={{ uri: 'https://simpleicon.com/wp-content/uploads/user-6.png' }} />
-            <View style={styles.headerTextContainer}>
-              <Text style={styles.headerText}>Bienvenido!</Text>
-              <Text style={styles.adminText}>Admin</Text>
+          <View style={styles.header}><View style={styles.headerTextContainer}>
+              <Text style={styles.headerText}>Bienvenido, {userName}!</Text>
             </View>
           </View>
           <TextInput
@@ -140,7 +153,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   headerText: {
-    fontSize: 18,
+    fontSize: 21,
     fontWeight: 'bold',
   },
   adminText: {
