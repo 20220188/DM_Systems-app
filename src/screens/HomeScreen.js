@@ -1,11 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, Modal, ScrollView, Alert, RefreshControl } from 'react-native';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../components/CustomDrawer';
 import { Avatar } from 'react-native-elements';
 import * as Progress from 'react-native-progress';
-import LoadingScreen from './LoadingScreen'; // Asegúrate de importar la pantalla de carga
 import * as Constantes from '../../utils/constantes'; // Asegúrate de tener la IP y otras constantes
 import * as Animatable from 'react-native-animatable'; // Importa react-native-animatable
 
@@ -15,12 +14,21 @@ export default function HomeScreen({ navigation }) {
   const [dependientes, setDependientes] = useState([]);
   const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
   const [userName, setUserName] = useState('');
+  const [newDependienteAdded, setNewDependienteAdded] = useState(false); // Estado para monitorear nuevos dependientes
+  const [refreshing, setRefreshing] = useState(false); // Estado para controlar el refresco
   const ip = Constantes.IP;
 
   useEffect(() => {
     fetchDependientes();
     fetchUserProfile();
   }, []);
+
+  useEffect(() => {
+    if (newDependienteAdded) {
+      fetchDependientes();
+      setNewDependienteAdded(false);
+    }
+  }, [newDependienteAdded]);
 
   const fetchUserProfile = async () => {
     try {
@@ -53,7 +61,34 @@ export default function HomeScreen({ navigation }) {
       setIsLoading(false);
     }
   };
-  
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchDependientes(); // Refresca los datos de dependientes
+    setRefreshing(false);
+  };
+
+  const createDependiente = async (nuevoDependiente) => {
+    try {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_dependientes.php?action=create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nuevoDependiente),
+      });
+
+      const data = await response.json();
+      if (data.status) {
+        Alert.alert('Éxito', 'Dependiente creado correctamente');
+        setNewDependienteAdded(true); // Marcar como que se agregó un nuevo dependiente
+      } else {
+        Alert.alert('Error', 'No se pudo crear el dependiente');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Ocurrió un error al crear el dependiente');
+    }
+  };
 
   const handleSearch = (text) => {
     setSearchTerm(text);
@@ -64,10 +99,7 @@ export default function HomeScreen({ navigation }) {
   );
 
   const handleLogout = () => {
-    
-    
-      navigation.replace('Login');
-    
+    navigation.replace('Login');
   };
 
   return (
@@ -85,7 +117,8 @@ export default function HomeScreen({ navigation }) {
             <Icon name="bars" size={24} color="black" />
           </TouchableOpacity>
           
-          <View style={styles.header}><View style={styles.headerTextContainer}>
+          <View style={styles.header}>
+            <View style={styles.headerTextContainer}>
               <Text style={styles.headerText}>Bienvenido, {userName}!</Text>
             </View>
           </View>
@@ -96,8 +129,7 @@ export default function HomeScreen({ navigation }) {
             onChangeText={handleSearch}
           />
 
-          <View style={styles.activities}>
-          </View>
+          <View style={styles.activities}></View>
           <Text style={styles.headerText}>
             <Icon name="check-circle" size={20} color="green" /> Dependientes
           </Text>
@@ -108,7 +140,15 @@ export default function HomeScreen({ navigation }) {
           >
             {filteredDependientes.length}
           </Animatable.Text>
-          <ScrollView style={styles.userList}>
+          <ScrollView
+            style={styles.userList}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+          >
             {filteredDependientes.map((dependiente) => (
               <View key={dependiente.id_dependiente} style={styles.card}>
                 <Text style={styles.cardTitle}>{dependiente.nombre_dependiente}</Text>
@@ -118,12 +158,6 @@ export default function HomeScreen({ navigation }) {
           </ScrollView>
         </View>
       </SafeAreaView>
-
-      {isLoading && (
-        <Modal visible={isLoading} transparent={true}>
-          <LoadingScreen navigation={navigation} />
-        </Modal>
-      )}
     </DrawerLayout>
   );
 }
@@ -147,7 +181,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: -10,
+    marginLeft: 50,
+    marginBottom: 30, 
   },
   headerTextContainer: {
     marginLeft: 10,

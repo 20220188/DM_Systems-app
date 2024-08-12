@@ -10,9 +10,8 @@ import Admins from './Admins';
 import Inicio from './HomeScreen';
 import Puntos from './PuntosVenta';
 import Venta from './usuarioPuntoVenta/Venta';
-import Inventario from './Inventario/inventario';
-import Vistaventa from './usuarioPuntoVenta/Vistaventa';
 import Dependientes from './Dependientes';
+import Inventario from './Inventario';
 
 const Stack = createStackNavigator();
 
@@ -31,7 +30,6 @@ function AppNavigator() {
         <Stack.Screen name="PuntosVenta" component={Puntos} options={{ headerShown: false }} />
         <Stack.Screen name="Venta" component={Venta} options={{ headerShown: false }} />
         <Stack.Screen name="Inventario" component={Inventario} options={{ headerShown: false }} />
-        <Stack.Screen name="VistaVenta" component={Vistaventa} options={{ headerShown: false }} />
         <Stack.Screen name="Dependientes" component={Dependientes} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
