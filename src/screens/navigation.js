@@ -10,7 +10,7 @@ import Admins from './Admins';
 import Inicio from './HomeScreen';
 import Puntos from './PuntosVenta';
 import Venta from './usuarioPuntoVenta/Venta';
-import Inventario from './Inventario/Inventario';
+import Inventario from './Inventario/inventario';
 import Vistaventa from './usuarioPuntoVenta/Vistaventa';
 import Dependientes from './Dependientes';
 

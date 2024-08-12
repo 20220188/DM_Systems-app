@@ -76,7 +76,7 @@ const getScreenByUserLevel = (userLevel) => {
 
 const handlerLogin = async () => {
   if (!alias || !contrasenia) {
-    Alert.alert('Error', 'Please enter your alias and password');
+    Alert.alert('Error', 'Alias o contraseña incorrectos.');
     return;
   }
 

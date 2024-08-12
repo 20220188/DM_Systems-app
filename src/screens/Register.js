@@ -54,16 +54,48 @@ export default function Register({ navigation }) {
     const fechaMinima = new Date();
     fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
   
+    // Validaciones básicas
     if (!nombre.trim() || !correo.trim() || !dui.trim() || !telefono.trim() || !alias.trim() || !clave.trim() || !confirmarClave.trim()) {
       Alert.alert("Debe llenar todos los campos");
       console.log('Faltan campos por llenar');
       return;
     }
-    console.log('Todos los campos son válidos');
   
+    // Validar que la contraseña tenga más de 8 caracteres
+    if (clave.length < 8) {
+      Alert.alert('La contraseña debe tener más de 8 caracteres');
+      console.log('Contraseña demasiado corta');
+      return;
+    }
+  
+    // Validar que las contraseñas coincidan
     if (clave !== confirmarClave) {
       Alert.alert('Las contraseñas no coinciden');
-      setAlertVisible(true);
+      console.log('Las contraseñas no coinciden');
+      return;
+    }
+  
+    // Validar formato de correo electrónico
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo)) {
+      Alert.alert('Por favor ingrese un correo electrónico válido');
+      console.log('Correo electrónico no válido');
+      return;
+    }
+  
+    // Validar formato del DUI (ejemplo: 12345678-9)
+    const duiRegex = /^\d{8}-\d$/;
+    if (!duiRegex.test(dui)) {
+      Alert.alert('Por favor ingrese un DUI válido (formato: 12345678-9)');
+      console.log('DUI no válido');
+      return;
+    }
+  
+    // Validar formato del teléfono (ejemplo: 1234-5678)
+    const telefonoRegex = /^\d{4}-\d{4}$/;
+    if (!telefonoRegex.test(telefono)) {
+      Alert.alert('Por favor ingrese un número de teléfono válido (formato: 1234-5678)');
+      console.log('Teléfono no válido');
       return;
     }
   
@@ -92,7 +124,7 @@ export default function Register({ navigation }) {
         setTimeout(() => {
           setLoading(false);
           navigation.navigate('Login');
-        }, 3000);
+        }, 2000);
       } else {
         Alert.alert('Error en la respuesta del servidor', responseText);
       }
@@ -101,6 +133,7 @@ export default function Register({ navigation }) {
       console.error('Error en la solicitud:', error);
     }
   };
+  
   
 
   const cerrarSesion = async () => {
@@ -189,6 +222,11 @@ export default function Register({ navigation }) {
           textoBoton='Registrar Usuario'
           accionBoton={handleCreate}
                 />
+
+          { <Buttons
+          textoBoton='Cerrar sesión'
+          accionBoton={cerrarSesion}
+                /> }
         </ScrollView>
       )}
     </KeyboardAvoidingView>
