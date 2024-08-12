@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Modal, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Modal, ScrollView, Button } from 'react-native';
 import * as Constantes from '../../utils/constantes';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import CustomDrawer from '../components/CustomDrawer';
 import LoadingScreen from './LoadingScreen';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 export default function Admin({ navigation }) {
   const drawer = useRef(null);
@@ -23,8 +24,17 @@ export default function Admin({ navigation }) {
   const [usuarios, setUsuarios] = useState([]);
   const [showClave, setShowClave] = useState(false);
   const [showConfirmarClave, setShowConfirmarClave] = useState(false);
-  
-  const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const [updateData, setUpdateData] = useState({
+    idUsuario: '',
+    nombre: '',
+    telefono: '',
+    usuario: '',
+    email: '',
+  });
+
 
   const ip = Constantes.IP;
 
@@ -133,60 +143,46 @@ export default function Admin({ navigation }) {
     }
   };
 
-  const handleUpdate = async () => {
-    if (!updateData) {
-      Alert.alert('Error', 'No se encontraron datos para actualizar.');
-      return;
-    }
+  const handleUpdate = (usuario) => {
+    console.log('Usuario seleccionado para actualizar:', usuario);
+    setUpdateData({
+      idUsuario: usuario.id_usuario,
+      nombre: usuario.nombre,
+      telefono: usuario.telefono,
+      usuario: usuario.usuario,
+      email: usuario.correo
+    });
+    setModalVisible(true);
+  };
 
-    if (!contrasenasCoinciden) {
-      Alert.alert('Error', 'Las contraseñas no coinciden.');
-      return;
-    }
+  const handleUpdateData = async () => {
+    if (selectedUser) {
+      try {
+        const formData = new FormData();
+        formData.append('idUsuario', updateData.idUsuario);
+        formData.append('nombreUsuario', updateData.nombre);
+        formData.append('telefonoUsuario', updateData.telefono);
+        formData.append('Usuario', updateData.usuario);
+        formData.append('correoUsuario', updateData.email);
 
-    setIsLoading(true);
+        const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_usuarios.php?action=updateRow`, {
+          method: 'POST',
+          body: formData,
+        });
 
-    try {
-      const formData = new FormData();
-      formData.append('idAdministrador', updateData.id);
-      formData.append('nombreAdministrador', nombre);
-      formData.append('correoAdministrador', email);
-      formData.append('DUIAdministrador', dui);
-      formData.append('telefonoAdministrador', telefono);
-      formData.append('UsuarioAdministrador', usuario);
-      formData.append('ClaveAdministrador', clave);
-      formData.append('confirmarClaveAdministrador', confirmarClave);
-      formData.append('idNivelAdministrador', nivelUsuario);
-
-      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_usuarios.php?action=updateRow`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const responseData = await response.json();
-      console.log('Response:', responseData);
-
-      if (responseData.status === 1) {
-        Alert.alert('Éxito', 'Usuario actualizado correctamente');
-        obtenerUsuarios(); // Actualiza la lista de usuarios después de la actualización
-        setUpdateData(null); // Limpia los datos de edición
-        // Limpia los campos del formulario después de la actualización
-        setNombre('');
-        setEmail('');
-        setDui('');
-        setTelefono('');
-        setUsuario('');
-        setClave('');
-        setConfirmarClave('');
-        setNivelUsuario('');
-      } else {
-        Alert.alert('Error', responseData.error || 'Error al actualizar el usuario');
+        if (response.ok) {
+          Alert.alert('Éxito', 'Usuario actualizado correctamente');
+          obtenerUsuarios();
+        } else {
+          const errorText = await response.text();
+          Alert.alert('Error', 'Error al actualizar el usuario: ' + errorText);
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Error al realizar la solicitud de actualización: ' + error.message);
+      } finally {
+        setModalVisible(false);
+        setSelectedUser(null);
       }
-    } catch (error) {
-      console.error('Error al enviar la solicitud de actualización:', error);
-      Alert.alert('Error', 'Error al enviar la solicitud de actualización: ' + error.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -370,13 +366,98 @@ export default function Admin({ navigation }) {
         <TouchableOpacity style={styles.button} onPress={agregarAdministrador}>
           <Text style={styles.buttonText}>Agregar Usuario</Text>
         </TouchableOpacity>
-      </View>
 
-      {isLoading && (
-        <Modal visible={isLoading} transparent={true}>
-          <LoadingScreen />
-        </Modal>
-      )}
+        <DrawerLayout
+          ref={drawer}
+          drawerWidth={300}
+          drawerPosition="left"
+          drawerType="slide"
+          drawerBackgroundColor="#7393FC"
+          renderNavigationView={() => <CustomDrawer navigation={navigation} onLogout={handleLogout} />}
+        >
+          <View style={styles.container}>
+            {usuarios.map((usuario) => (
+              <View key={usuario.id_usuario} style={styles.card}>
+                <Text style={styles.cardTitle}>{usuario.nombre}</Text>
+                <Text style={styles.cardText}>Correo: {usuario.correo}</Text>
+                <Text style={styles.cardText}>DUI: {usuario.DUI}</Text>
+                <Text style={styles.cardText}>Teléfono: {usuario.telefono}</Text>
+                <Text style={styles.cardText}>Usuario: {usuario.usuario}</Text>
+                <Text style={styles.cardText}>Nivel: {usuario.tipo_usuario}</Text>
+                <View style={styles.cardButtons}>
+                  <TouchableOpacity
+                    style={[styles.cardButton, styles.editButton]}
+                    onPress={() => handleUpdate(usuario)}
+                  >
+                    <Text style={styles.cardButtonText}>Actualizar</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.cardButton, styles.deleteButton]}
+                    onPress={() => eliminarUsuario(usuario.id_usuario)}
+                  >
+                    <Text style={styles.cardButtonText}>Eliminar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={agregarAdministrador}>
+            <Text style={styles.buttonText}>Agregar Usuario</Text>
+          </TouchableOpacity>
+
+
+<Modal
+  visible={modalVisible}
+  transparent={true}
+  animationType="slide"
+  onRequestClose={() => setModalVisible(false)}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <TextInput
+        style={styles.input}
+        placeholder="Nombre"
+        value={updateData.nombre}
+        onChangeText={(text) => setUpdateData({ ...updateData, nombre: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Usuario"
+        value={updateData.usuario}
+        onChangeText={(text) => setUpdateData({ ...updateData, usuario: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Correo"
+        value={updateData.email}
+        onChangeText={(text) => setUpdateData({ ...updateData, email: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Teléfono"
+        value={updateData.telefono}
+        onChangeText={(text) => setUpdateData({ ...updateData, telefono: text })}
+      />
+      <View style={styles.modalButtons}>
+        <TouchableOpacity style={styles.updateButton} onPress={handleUpdateData}>
+          <Text style={styles.updateButtonText}>Actualizar Datos</Text>
+        </TouchableOpacity>
+        <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+      </View>
+    </View>
+  </View>
+</Modal>
+
+          {isLoading && (
+            <Modal visible={isLoading} transparent={true}>
+              <LoadingScreen />
+            </Modal>
+          )}
+        </DrawerLayout>
+
+      </View>
     </DrawerLayout>
   );
 }
@@ -402,6 +483,29 @@ const styles = StyleSheet.create({
     marginTop: 50, // Ajusta este valor según tus necesidades
     marginBottom: 20,
   },
+
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 10,
+  },
+
+
   input: {
     width: '100%',
     padding: 12,
