@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Image, FlatList, Alert, Button, TouchableOpacity } from 'react-native';
-import * as Constantes from '../../utils/constantes';
+import * as Constantes from '../../../utils/constantes';
 import { DrawerLayout } from 'react-native-gesture-handler';
-import CustomDrawer from '../components/CustomDrawer';
-import ProductoCard from '../components/cards/CardProducto';
-import LoadingScreen from './LoadingScreen';
+import CustomDrawer from '../../components/CustomDrawer';
+import ProductoCard from '../../components/cards/CardProducto';
+import LoadingScreen from '../LoadingScreen';
 
 export default function Venta({ navigation }) {
     const drawer = useRef(null);
@@ -109,7 +109,7 @@ export default function Venta({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
-                <Image source={require('../img/logo2.jpg')} style={styles.logo} />
+                <Image source={require('../../img/logo2.jpg')} style={styles.logo} />
                 <TextInput
                     style={styles.searchText}
                     placeholder="Buscar..."
@@ -120,6 +120,7 @@ export default function Venta({ navigation }) {
             <FlatList
                 ListHeaderComponent={
                     <>
+                        <Text style={styles.sectionTitle}>Ventas</Text>
                         <Text style={styles.welcomeText}>Bienvenido, {userName}</Text>
                         <Text style={styles.sectionTitle}>Productos</Text>
                     </>

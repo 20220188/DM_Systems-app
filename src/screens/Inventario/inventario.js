@@ -1,137 +1,196 @@
-import React, { useRef } from 'react';
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { StyleSheet, View, Text, TextInput, Image, FlatList, Alert, Button, TouchableOpacity } from 'react-native';
+import * as Constantes from '../../../utils/constantes';
 import { DrawerLayout } from 'react-native-gesture-handler';
-import { Card } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomDrawer from '../../components/CustomDrawer';
-
-const products = [
-    {
-        name: 'Fish Oil Omega 3',
-        price: '$20',
-        location: 'Bandung',
-        image: 'https://drive.google.com/uc?export=view&id=19AQg4ZWr4VwTqrGOt8QSEHTQP2IARuId',
-    },
-    {
-        name: 'Acetaminofen 500mg',
-        price: '$4',
-        location: 'Bandung',
-        image: 'https://drive.google.com/uc?export=view&id=1X62GkYbcu0idVZxH93QJ-0Jtzbm7fTEw',
-    },
-    {
-        name: 'Ibuprofeno 250mg',
-        price: '$5',
-        location: 'Bandung',
-        image: 'https://drive.google.com/uc?export=view&id=1lpHhBbDukHnwmuJOB2XYiEAgOOsN0tbT',
-
-    },
-    {
-        name: 'Paracetamol 500mg',
-        price: '$2',
-        oldPrice: '$5',
-        location: 'Bandung',
-        image: 'https://drive.google.com/uc?export=view&id=1eBEU74KSsO8CjRcucNJMg7K429VKpmy0',
-
-    },
-
-];
+import ProductoCard from '../../components/cards/CardProducto';
+import LoadingScreen from '../LoadingScreen';
 
 export default function Inventario({ navigation }) {
     const drawer = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [userName, setUserName] = useState('');
+    const ip = Constantes.IP;
+
+    const handleLogout = () => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+            navigation.replace('Login');
+        }, 3000);
+    };
+
+    const renderItem = ({ item }) => (
+        <ProductoCard
+            key={item.id_producto.toString()}
+            ip={ip}
+            codigo={item.codigo}
+            nombre={item.nombre}
+            imagen={item.imagen}
+            presentacion={item.presentacion}
+            fecha_vencimiento={item.fecha_vencimiento}
+        />
+    );
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=readProfile`);
+                const data = await response.json();
+                if (data.status) {
+                    setUserName(data.dataset.nombre);
+                } else {
+                    Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
+                }
+            } catch (error) {
+                Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
+            }
+        };
+
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_productos.php?action=readAll`);
+                const data = await response.json();
+                if (data.dataset) {
+                    setProducts(data.dataset);
+                    setFilteredProducts(data.dataset);
+                } else {
+                    Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+                }
+            } catch (error) {
+                Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+            }
+        };
+
+        fetchUserProfile();
+        fetchProducts();
+    }, []);
+
+    const cerrarSesion = async () => {
+        try {
+          const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
+            method: 'GET'
+          });
+    
+          const data = await response.json();
+    
+          if (data.status) {
+            console.log("Sesión Finalizada");
+            Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
+              {
+                text: "OK",
+                onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
+              }
+            ]);
+          } else {
+            console.log('No se pudo eliminar la sesión');
+          }
+        } catch (error) {
+          console.error('Error desde Catch', error);
+          Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
+        }
+      };
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        if (query) {
+            const filteredData = products.filter(product =>
+                product.nombre.toLowerCase().includes(query.toLowerCase())
+            );
+            setFilteredProducts(filteredData);
+        } else {
+            setFilteredProducts(products);
+        }
+    };
 
     return (
-
-        <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container}>
-
+        <View style={styles.container}>
+            <View style={styles.searchContainer}>
+                <Image source={require('../../img/logo2.jpg')} style={styles.logo} />
                 <TextInput
-                    style={styles.searchInput}
-                    placeholder="Buscar productos..."
+                    style={styles.searchText}
+                    placeholder="Buscar..."
+                    value={searchQuery}
+                    onChangeText={handleSearch}
                 />
-                <ScrollView style={styles.scrollContainer}>
-                    {products.map((product, index) => (
-                        <Card key={index}>
-                            <Card.Title>{product.name}</Card.Title>
-                            <Card.Divider />
-                            <Card.Image source={{ uri: product.image }} />
-                            <Text style={styles.price}>{product.price}</Text>
-                            {product.oldPrice && (
-                                <Text style={styles.oldPrice}>{product.oldPrice}</Text>
-                            )}
-                            <Text style={styles.location}>{product.location}</Text>
-                        </Card>
-                    ))}
-
-                </ScrollView>
-                <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.buttonText}>Cerrar sesión</Text>
-                </TouchableOpacity>
             </View>
-        </SafeAreaView>
-
+            <FlatList
+                ListHeaderComponent={
+                    <>
+                        <Text style={styles.sectionTitle}>Inventario</Text>
+                        <Text style={styles.welcomeText}>Bienvenido, {userName}</Text>
+                        <Text style={styles.sectionTitle}>Productos</Text>
+                    </>
+                }
+                data={filteredProducts}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id_producto.toString()}
+                contentContainerStyle={styles.productsContainer}
+            />
+            <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
+                <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
+            </TouchableOpacity>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: '#D2D9F1',
-    },
     container: {
         flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
         backgroundColor: '#D2D9F1',
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        marginTop: 50,
+    },
+    logo: {
+        width: 50,
+        height: 50,
+        marginRight: 10,
+    },
+    searchText: {
+        flex: 1,
+        backgroundColor: '#f1f1f1',
+        borderRadius: 25,
+        paddingVertical: 8,
+        paddingHorizontal: 20,
+        fontFamily: 'Poppins-Regular',
+    },
+    welcomeText: {
+        fontSize: 24,
+        color: '#f08080',
+        marginBottom: 10,
+        fontFamily: 'Poppins-Regular',
+        marginLeft: 15,
+        textAlign: 'center',
+    },
+    sectionTitle: {
+        fontSize: 20,
+        marginBottom: 10,
+        fontFamily: 'Poppins-Regular',
+        textAlign: 'center',
+    },
+    productsContainer: {
+        paddingHorizontal: 20,
         paddingTop: 20,
     },
-    menuButton: {
-        position: 'absolute',
-        top: 10,
-        left: 10,
-    },
-    title: {
-        fontSize: 24,
-        marginBottom: 20,
-        color: 'black',
-    },
-    boton: {
-        backgroundColor: 'red',
-        padding: 10,
-        borderRadius: 20,
-        marginVertical: 10,
-        width: '80%',
+    logoutButton: {
+        backgroundColor: '#ff6347',
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 5,
         alignItems: 'center',
+        justifyContent: 'center',
+        margin: 20,
     },
-    buttonText: {
-        color: 'white',
+    logoutButtonText: {
+        color: '#fff',
         fontSize: 16,
-    },
-    searchInput: {
-        height: 40,
-        borderColor: '#000',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingLeft: 10,
-        marginBottom: 20,
-        width: '90%',
-        color: 'black',
-    },
-    scrollContainer: {
-        width: '100%',
-        paddingHorizontal: 10,
-    },
-    price: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    oldPrice: {
-        fontSize: 14,
-        textDecorationLine: 'line-through',
-        color: 'red',
-    },
-    location: {
-        fontSize: 14,
-        color: '#888',
+        fontFamily: 'Poppins-Regular',
     },
 });
-
