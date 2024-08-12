@@ -199,7 +199,7 @@ export default function Register({ navigation }) {
           />
 
           <Input
-            placeHolder='Usuario '
+            placeHolder='Alias '
             setValor={alias}
             setTextChange={setAlias}
           />

@@ -1,18 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, Image, FlatList, Alert, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Image, FlatList, Alert, TouchableOpacity, RefreshControl } from 'react-native';
 import * as Constantes from '../../../utils/constantes';
-import { DrawerLayout } from 'react-native-gesture-handler';
-import CustomDrawer from '../../components/CustomDrawer';
 import ProductoCard from '../../components/cards/CardProducto';
-import LoadingScreen from '../LoadingScreen';
 
 export default function Venta({ navigation }) {
-    const drawer = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [userName, setUserName] = useState('');
+    const [refreshing, setRefreshing] = useState(false); // Estado para controlar el refresh
     const ip = Constantes.IP;
 
     const handleLogout = () => {
@@ -35,64 +32,65 @@ export default function Venta({ navigation }) {
         />
     );
 
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=readProfile`);
-                const data = await response.json();
-                if (data.status) {
-                    setUserName(data.dataset.nombre);
-                } else {
-                    Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
-                }
-            } catch (error) {
+    const fetchUserProfile = async () => {
+        try {
+            const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=readProfile`);
+            const data = await response.json();
+            if (data.status) {
+                setUserName(data.dataset.nombre);
+            } else {
                 Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
             }
-        };
+        } catch (error) {
+            Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
+        }
+    };
 
-        const fetchProducts = async () => {
-            try {
-                const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_productos.php?action=readAll`);
-                const data = await response.json();
-                if (data.dataset) {
-                    setProducts(data.dataset);
-                    setFilteredProducts(data.dataset);
-                } else {
-                    Alert.alert('Error', 'Ocurrió un error al obtener los productos');
-                }
-            } catch (error) {
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_productos.php?action=readAll`);
+            const data = await response.json();
+            if (data.dataset) {
+                setProducts(data.dataset);
+                setFilteredProducts(data.dataset);
+            } else {
                 Alert.alert('Error', 'Ocurrió un error al obtener los productos');
             }
-        };
+        } catch (error) {
+            Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+        }
+    };
 
-        fetchUserProfile();
-        fetchProducts();
-    }, []);
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        await fetchProducts(); // Actualiza los productos
+        setRefreshing(false);
+    };
 
     const cerrarSesion = async () => {
         try {
-          const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
-            method: 'GET'
-          });
-    
-          const data = await response.json();
-    
-          if (data.status) {
-            console.log("Sesión Finalizada");
-            Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
-              {
-                text: "OK",
-                onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
-              }
-            ]);
-          } else {
-            console.log('No se pudo eliminar la sesión');
-          }
+            const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
+                method: 'GET'
+            });
+
+            const data = await response.json();
+
+            if (data.status) {
+                console.log("Sesión Finalizada");
+                Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
+                    {
+                        text: "OK",
+                        onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
+                    }
+                ]);
+            } else {
+                console.log('No se pudo eliminar la sesión');
+            }
         } catch (error) {
-          console.error('Error desde Catch', error);
-          Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
+            console.error('Error desde Catch', error);
+            Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
         }
-      };
+    };
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -105,6 +103,11 @@ export default function Venta({ navigation }) {
             setFilteredProducts(products);
         }
     };
+
+    useEffect(() => {
+        fetchUserProfile();
+        fetchProducts();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -129,6 +132,12 @@ export default function Venta({ navigation }) {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id_producto.toString()}
                 contentContainerStyle={styles.productsContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                    />
+                }
             />
             <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
                 <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
