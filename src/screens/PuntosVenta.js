@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Constantes from '../../utils/constantes';
 import CustomDrawer from '../components/CustomDrawer';
 import LoadingScreen from './LoadingScreen';
+
 export default function PuntosVenta({ navigation }) {
   const ip = Constantes.IP;
 
@@ -14,6 +15,7 @@ export default function PuntosVenta({ navigation }) {
   const [puntoVenta, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
+  const [showPassword, setShowPassword] = useState(false); // Nuevo estado para controlar la visibilidad de la contraseña
 
   // Llama a obtenerUsuarios cuando el componente se monte
   useEffect(() => {
@@ -52,13 +54,16 @@ export default function PuntosVenta({ navigation }) {
   };
 
   const agregarPuntoVenta = async () => {
+    if (!puntoVenta.trim() || !contrasena.trim()) {
+      Alert.alert('Error', 'Por favor, completa todos los campos');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const formData = new FormData();
       formData.append('nombrePuntoVenta', puntoVenta);
       formData.append('clavePuntoVenta', contrasena);
-
-
 
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=createRow`, {
         method: 'POST',
@@ -94,6 +99,11 @@ export default function PuntosVenta({ navigation }) {
   const handleUpdate = async () => {
     if (!updateData) {
       Alert.alert('Error', 'No se encontraron datos para actualizar.');
+      return;
+    }
+
+    if (!puntoVenta.trim() || !contrasena.trim()) {
+      Alert.alert('Error', 'Por favor, completa todos los campos');
       return;
     }
 
@@ -197,8 +207,6 @@ export default function PuntosVenta({ navigation }) {
           <Icon name="bars" size={24} color="black" />
         </TouchableOpacity>
 
-
-
         <ScrollView contentContainerStyle={styles.scrollContainer}>
 
           <Text style={[styles.title, styles.titleMargin]}>Crear Puntos de venta</Text>
@@ -211,13 +219,20 @@ export default function PuntosVenta({ navigation }) {
             onChangeText={setUsuario}
           />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            value={contrasena}
-            onChangeText={setContrasena}
+          {/* Campo de contraseña con botón para mostrar/ocultar */}
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Contraseña"
+              value={contrasena}
+              onChangeText={setContrasena}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity style={styles.eyeButton} onPress={() => setShowPassword(!showPassword)}>
+              <Icon name={showPassword ? 'eye-slash' : 'eye'} size={20} color="gray" />
+            </TouchableOpacity>
+          </View>
 
-          />
           {usuarios.map((puntoVenta) => (
             <View key={puntoVenta.id_punto_venta} style={styles.card}>
               <Text style={styles.cardTitle}>{puntoVenta.punto_venta}</Text>
@@ -242,8 +257,8 @@ export default function PuntosVenta({ navigation }) {
               </View>
             </View>
           ))}
-          
-          </ScrollView>
+
+        </ScrollView>
 
         <TouchableOpacity style={styles.button} onPress={updateData ? handleUpdate : agregarPuntoVenta}>
           <Text style={styles.buttonText}>{updateData ? 'Actualizar punto de venta' : 'Agregar punto de venta'}</Text>
@@ -380,6 +395,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
+    position: 'relative',
   },
   eyeButton: {
     position: 'absolute',

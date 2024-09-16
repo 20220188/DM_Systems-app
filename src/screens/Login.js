@@ -182,11 +182,7 @@ const handlerLogin = async () => {
             </View>
 
             <View style={styles.divider} />
-            <Buttons textoBoton="Iniciar sesión" accionBoton={handlerLogin} />
-
-            <TouchableOpacity onPress={irRegistrar}>
-              <Text style={styles.forgotPasswordText}>Ir al registro</Text>
-            </TouchableOpacity>
+            <Buttons textoBoton="Iniciar sesión" accionBoton={handlerLogin} />                                          
           </ScrollView>
         )}
       </KeyboardAvoidingView>

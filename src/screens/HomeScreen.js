@@ -25,7 +25,7 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     if (newDependienteAdded) {
-      fetchDependientes();
+      onRefresh(); // Refrescar los datos cuando se agrega un dependiente
       setNewDependienteAdded(false);
     }
   }, [newDependienteAdded]);
