@@ -12,13 +12,14 @@ export default function PuntosVenta({ navigation }) {
   const drawer = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [usuarios, setUsuarios] = useState([]);
-  const [puntoVenta, setUsuario] = useState('');
+  const [puntoVenta, setPuntoVenta] = useState('');  // Renombrado para claridad
   const [contrasena, setContrasena] = useState('');
-  const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
-  const [showPassword, setShowPassword] = useState(false); // Nuevo estado para controlar la visibilidad de la contraseña
-  const [modalVisible, setModalVisible] = useState(false); // Nuevo estado para mostrar el modal de actualización
+  const [modalPuntoVenta, setModalPuntoVenta] = useState('');  // Estado para el modal
+  const [modalContrasena, setModalContrasena] = useState('');  // Estado para el modal
+  const [updateData, setUpdateData] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  // Llama a obtenerUsuarios cuando el componente se monte
   useEffect(() => {
     obtenerUsuarios();
   }, []);
@@ -78,10 +79,10 @@ export default function PuntosVenta({ navigation }) {
         const responseData = JSON.parse(textResponse);
 
         if (responseData.status === 1) {
-          setUsuario('');
+          setPuntoVenta('');
           setContrasena('');
           Alert.alert('Éxito', 'Punto de venta agregado correctamente');
-          obtenerUsuarios(); // Actualiza la lista de puntos de venta después de agregar uno nuevo
+          obtenerUsuarios();
         } else {
           Alert.alert('Error', responseData.error || 'Error al agregar el punto de venta');
         }
@@ -103,7 +104,7 @@ export default function PuntosVenta({ navigation }) {
       return;
     }
 
-    if (!puntoVenta.trim() || !contrasena.trim()) {
+    if (!modalPuntoVenta.trim() || !modalContrasena.trim()) {
       Alert.alert('Error', 'Por favor, completa todos los campos');
       return;
     }
@@ -113,8 +114,8 @@ export default function PuntosVenta({ navigation }) {
     try {
       const formData = new FormData();
       formData.append('idPuntoVenta', updateData.id_punto_venta);
-      formData.append('nombrePuntoVenta', puntoVenta);
-      formData.append('clavePuntoVenta', contrasena);
+      formData.append('nombrePuntoVenta', modalPuntoVenta);
+      formData.append('clavePuntoVenta', modalContrasena);
 
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestros_punto_de_venta.php?action=updateRow`, {
         method: 'POST',
@@ -126,12 +127,11 @@ export default function PuntosVenta({ navigation }) {
 
       if (responseData.status === 1) {
         Alert.alert('Éxito', 'Punto de venta actualizado correctamente');
-        obtenerUsuarios(); // Actualiza la lista de puntos de venta después de la actualización
-        setUpdateData(null); // Limpia los datos de edición
-        setModalVisible(false); // Cierra el modal después de la actualización
-        // Limpia los campos del formulario después de la actualización
-        setUsuario('');
-        setContrasena('');
+        obtenerUsuarios();
+        setUpdateData(null);
+        setModalVisible(false);
+        setModalPuntoVenta('');  // Limpiar campo del modal
+        setModalContrasena('');  // Limpiar campo del modal
       } else {
         Alert.alert('Error', responseData.error || 'Error al actualizar el punto de venta');
       }
@@ -144,7 +144,6 @@ export default function PuntosVenta({ navigation }) {
   };
 
   const eliminarUsuario = async (id_punto_venta) => {
-    // Mostrar el diálogo de confirmación
     Alert.alert(
       'Confirmación de Eliminación',
       '¿Estás seguro de que deseas eliminar este punto de venta?',
@@ -157,7 +156,6 @@ export default function PuntosVenta({ navigation }) {
         {
           text: 'Sí',
           onPress: async () => {
-            // Continuar con la eliminación si el usuario confirma
             try {
               const formData = new FormData();
               formData.append('idPuntoVenta', id_punto_venta);
@@ -175,7 +173,7 @@ export default function PuntosVenta({ navigation }) {
 
                 if (responseData.status === 1) {
                   Alert.alert('Éxito', 'Registro eliminado correctamente');
-                  obtenerUsuarios(); // Actualizar la lista de puntos de venta
+                  obtenerUsuarios();
                 } else {
                   console.error('Error al eliminar el punto de venta:', responseData.error || 'Error desconocido');
                   Alert.alert('Error', responseData.error || 'Error al eliminar el punto de venta');
@@ -210,7 +208,6 @@ export default function PuntosVenta({ navigation }) {
         </TouchableOpacity>
 
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-
           <Text style={[styles.title, styles.titleMargin]}>Crear Puntos de venta</Text>
           <Icon name="truck" size={50} color="black" style={styles.icon} />
 
@@ -218,16 +215,15 @@ export default function PuntosVenta({ navigation }) {
             style={styles.input}
             placeholder="Nombre"
             value={puntoVenta}
-            onChangeText={setUsuario}
+            onChangeText={setPuntoVenta}  // Actualizar estado del formulario principal
           />
 
-          {/* Campo de contraseña con botón para mostrar/ocultar */}
           <View style={styles.passwordContainer}>
             <TextInput
               style={styles.input}
               placeholder="Contraseña"
               value={contrasena}
-              onChangeText={setContrasena}
+              onChangeText={setContrasena}  // Actualizar estado del formulario principal
               secureTextEntry={!showPassword}
             />
             <TouchableOpacity style={styles.eyeButton} onPress={() => setShowPassword(!showPassword)}>
@@ -242,9 +238,10 @@ export default function PuntosVenta({ navigation }) {
                 <TouchableOpacity
                   style={[styles.cardButton, styles.editButton]}
                   onPress={() => {
-                    setUpdateData(puntoVenta); // Establecer datos para actualizar
-                    setUsuario(puntoVenta.punto_venta);
-                    setContrasena(puntoVenta.contrasena); // Asegúrate de que este campo exista en tu respuesta JSON
+                    setUpdateData(puntoVenta);
+                    setModalPuntoVenta(puntoVenta.punto_venta);  // Usar estado del modal
+                    setModalContrasena(puntoVenta.contrasena || '');  // Usar estado del modal
+                    setModalVisible(true);
                   }}
                 >
                   <Text style={styles.cardButtonText}>Actualizar</Text>
@@ -259,19 +256,55 @@ export default function PuntosVenta({ navigation }) {
               </View>
             </View>
           ))}
-
         </ScrollView>
 
-        <TouchableOpacity style={styles.button} onPress={updateData ? handleUpdate : agregarPuntoVenta}>
-          <Text style={styles.buttonText}>{updateData ? 'Actualizar punto de venta' : 'Agregar punto de venta'}</Text>
+        <TouchableOpacity style={styles.button1} onPress={agregarPuntoVenta}>
+          <Text style={styles.buttonText1}>{'Agregar punto de venta'}</Text>
         </TouchableOpacity>
       </View>
 
-      {isLoading && (
-        <Modal visible={isLoading} transparent={true}>
-          <LoadingScreen />
-        </Modal>
-      )}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Actualizar Punto de Venta</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Nombre"
+              value={modalPuntoVenta}  // Usar estado del modal
+              onChangeText={setModalPuntoVenta}
+            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Contraseña"
+                value={modalContrasena}  // Usar estado del modal
+                onChangeText={setModalContrasena}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
+                <Icon name={showPassword ? 'eye-slash' : 'eye'} size={20} color="gray" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalButtonsContainer}>
+              <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+                <Text style={styles.buttonText}>Actualizar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {isLoading && <LoadingScreen />}
     </DrawerLayout>
   );
 }
@@ -280,7 +313,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#D2D9F1',
-    paddingBottom: 80, // Para evitar que el botón se sobreponga al contenido
+    paddingBottom: 80,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -294,7 +327,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   titleMargin: {
-    marginTop: 50, // Ajusta este valor según tus necesidades
+    marginTop: 50,
     marginBottom: 20,
   },
   depentientesContainer: {
@@ -332,6 +365,21 @@ const styles = StyleSheet.create({
     right: 20,
   },
   buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  button1: {
+    backgroundColor: '#251C6A',
+    padding: 19,
+    borderRadius: 25,
+    width: '90%',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+  },
+  buttonText1: {
     color: 'white',
     fontSize: 16,
   },
@@ -402,5 +450,53 @@ const styles = StyleSheet.create({
   eyeButton: {
     position: 'absolute',
     right: 14,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo oscuro para el modal
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#251C6A',
+    padding: 15,
+    borderRadius: 10,
+    flex: 1,
+    alignItems: 'center',
+    marginRight: 10, // Espacio entre los botones
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#FF5722',
+    padding: 15,
+    borderRadius: 10,
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: 10, // Espacio entre los botones
+  },
+  cancelButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

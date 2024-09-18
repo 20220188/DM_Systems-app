@@ -7,7 +7,6 @@ import CustomDrawer from '../components/CustomDrawer';
 import LoadingScreen from './LoadingScreen';
 
 export default function Dependientes({ navigation }) {
-
   const ip = Constantes.IP;
 
   const drawer = useRef(null);
@@ -15,9 +14,11 @@ export default function Dependientes({ navigation }) {
   const [usuarios, setUsuarios] = useState([]);
   const [usuario, setUsuario] = useState('');
   const [codigo, setCodigo] = useState('');
-  const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
+  const [updateData, setUpdateData] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalUsuario, setModalUsuario] = useState('');
+  const [modalCodigo, setModalCodigo] = useState('');
 
-  // Llama a obtenerUsuarios cuando el componente se monte
   useEffect(() => {
     obtenerUsuarios();
   }, []);
@@ -74,8 +75,8 @@ export default function Dependientes({ navigation }) {
         if (responseData.status === 1) {
           setUsuario('');
           setCodigo('');
-          Alert.alert('Éxito', 'Usuario dependiente correctamente');
-          obtenerUsuarios(); // Actualiza la lista de usuarios después de agregar uno nuevo
+          Alert.alert('Éxito', 'Usuario dependiente agregado correctamente');
+          obtenerUsuarios();
         } else {
           Alert.alert('Error', responseData.error || 'Error al agregar el dependiente');
         }
@@ -101,9 +102,9 @@ export default function Dependientes({ navigation }) {
 
     try {
       const formData = new FormData();
-      formData.append('idDependiente', updateData.id);
-      formData.append('nombreDependiente', usuario);
-      formData.append('codigoDependiente', codigo);
+      formData.append('idDependiente', updateData.id_dependiente);
+      formData.append('nombreDependiente', modalUsuario);
+      formData.append('codigoDependiente', modalCodigo);
 
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_dependientes.php?action=updateRow`, {
         method: 'POST',
@@ -115,11 +116,9 @@ export default function Dependientes({ navigation }) {
 
       if (responseData.status === 1) {
         Alert.alert('Éxito', 'Usuario actualizado correctamente');
-        obtenerUsuarios(); // Actualiza la lista de usuarios después de la actualización
-        setUpdateData(null); // Limpia los datos de edición
-        // Limpia los campos del formulario después de la actualización
-        setUsuario('');
-        setCodigo('');
+        obtenerUsuarios();
+        setUpdateData(null);
+        setModalVisible(false);
       } else {
         Alert.alert('Error', responseData.error || 'Error al actualizar el usuario');
       }
@@ -132,7 +131,6 @@ export default function Dependientes({ navigation }) {
   };
 
   const eliminarUsuario = async (id_dependiente) => {
-    // Mostrar el diálogo de confirmación
     Alert.alert(
       'Confirmación de Eliminación',
       '¿Estás seguro de que deseas eliminar este usuario?',
@@ -145,7 +143,6 @@ export default function Dependientes({ navigation }) {
         {
           text: 'Sí',
           onPress: async () => {
-            // Continuar con la eliminación si el usuario confirma
             try {
               const formData = new FormData();
               formData.append('idDependiente', id_dependiente);
@@ -163,14 +160,14 @@ export default function Dependientes({ navigation }) {
 
                 if (responseData.status === 1) {
                   Alert.alert('Éxito', 'Registro eliminado correctamente');
-                  obtenerUsuarios(); // Actualizar la lista de usuarios
+                  obtenerUsuarios();
                 } else {
-                  console.error('Error al eliminar el administrador:', responseData.error || 'Error desconocido');
-                  Alert.alert('Error', responseData.error || 'Error al eliminar el administrador');
+                  console.error('Error al eliminar el dependiente:', responseData.error || 'Error desconocido');
+                  Alert.alert('Error', responseData.error || 'Error al eliminar el dependiente');
                 }
               } else {
-                console.error('Error al eliminar el administrador:', response.status);
-                Alert.alert('Error', 'Error al eliminar el administrador: ' + response.status);
+                console.error('Error al eliminar el dependiente:', response.status);
+                Alert.alert('Error', 'Error al eliminar el dependiente: ' + response.status);
               }
             } catch (error) {
               console.error('Error al realizar la solicitud de eliminación:', error);
@@ -197,11 +194,8 @@ export default function Dependientes({ navigation }) {
           <Icon name="bars" size={24} color="black" />
         </TouchableOpacity>
 
-          
-        
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          
-        <Text style={[styles.title, styles.titleMargin]}>Crear Dependientes</Text>
+          <Text style={[styles.title, styles.titleMargin]}>Crear Dependientes</Text>
           <Icon name="user-plus" size={50} color="black" style={styles.icon} />
 
           <TextInput
@@ -215,9 +209,10 @@ export default function Dependientes({ navigation }) {
             style={styles.input}
             placeholder="Código"
             value={codigo}
-            onChangeText={(text) => setCodigo(text.replace(/[^0-9]/g, ''))} // Only allow numbers
-            keyboardType="numeric" // Show numeric keyboard
+            onChangeText={(text) => setCodigo(text.replace(/[^0-9]/g, ''))}
+            keyboardType="numeric"
           />
+          
           {usuarios.map((usuario) => (
             <View key={usuario.id_dependiente} style={styles.card}>
               <Text style={styles.cardTitle}>{usuario.nombre_dependiente}</Text>
@@ -226,9 +221,10 @@ export default function Dependientes({ navigation }) {
                 <TouchableOpacity
                   style={[styles.cardButton, styles.editButton]}
                   onPress={() => {
-                    setUpdateData(usuario); // Set the data for updating
-                    setUsuario(usuario.nombre_dependiente);
-                    setCodigo(usuario.codigo);
+                    setUpdateData(usuario);
+                    setModalUsuario(usuario.nombre_dependiente);
+                    setModalCodigo(usuario.codigo);
+                    setModalVisible(true);
                   }}
                 >
                   <Text style={styles.cardButtonText}>Actualizar</Text>
@@ -243,12 +239,53 @@ export default function Dependientes({ navigation }) {
               </View>
             </View>
           ))}
-
         </ScrollView>
 
-        <TouchableOpacity style={styles.button} onPress={updateData ? handleUpdate : agregarDependiente}>
-          <Text style={styles.buttonText}>{updateData ? 'Actualizar Dependiente' : 'Agregar Dependiente'}</Text>
+        <TouchableOpacity style={styles.button} onPress={agregarDependiente}>
+          <Text style={styles.buttonText}>Agregar Dependiente</Text>
         </TouchableOpacity>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalTitle}>Actualizar Dependiente</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Nombre"
+                value={modalUsuario}
+                onChangeText={setModalUsuario}
+              />
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Código"
+                value={modalCodigo}
+                onChangeText={(text) => setModalCodigo(text.replace(/[^0-9]/g, ''))}
+                keyboardType="numeric"
+              />
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.buttonUpdate]}
+                  onPress={handleUpdate}
+                >
+                  <Text style={styles.textStyle}>Actualizar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.buttonCancel]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>Cancelar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
 
       {isLoading && (
@@ -264,7 +301,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#D2D9F1',
-    paddingBottom: 80, // Para evitar que el botón se sobreponga al contenido
+    paddingBottom: 80,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -278,15 +315,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   titleMargin: {
-    marginTop: 50, // Ajusta este valor según tus necesidades
+    marginTop: 50,
     marginBottom: 20,
   },
-  depentientesContainer:{
-    marginLeft:90,
-    marginTop:15
-  },
   icon: {
-    marginLeft:10
+    marginLeft: 10
   },
   input: {
     width: '100%',
@@ -296,13 +329,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#ddd',
     borderWidth: 1,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
   },
   button: {
     backgroundColor: '#251C6A',
@@ -318,15 +344,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
-  },
-  picker: {
-    width: '100%',
-    padding: 10,
-    marginVertical: 10,
-    backgroundColor: '#ffffff',
-    borderRadius: 30,
-    borderColor: '#ddd',
-    borderWidth: 3,
   },
   menuButton: {
     position: 'absolute',
@@ -377,13 +394,58 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalInput: {
     width: '100%',
+    padding: 10,
+    marginVertical: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    borderColor: '#ddd',
+    borderWidth: 1,
   },
-  eyeButton: {
-    position: 'absolute',
-    right: 14,
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
   },
+  modalButton: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    width: '45%',
+  },
+  buttonUpdate: {
+    backgroundColor: "#2196F3",
+  },
+  buttonCancel: {
+    backgroundColor: "#F44336",
+  }
 });
