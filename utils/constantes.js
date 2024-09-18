@@ -14,10 +14,10 @@
 //export const IP = 'http://10.10.2.108';
 
 //IP lab de Emerson Musun
-export const IP = 'http://10.10.0.28';
+//export const IP = 'http://10.10.0.28';
 
 //IP Musun
-//export const IP = 'http://192.168.1.21';
+export const IP = 'http://192.168.1.20';
 
 //export const IP = 'http://172.20.10.10';
 

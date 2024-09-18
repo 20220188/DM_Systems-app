@@ -16,6 +16,7 @@ export default function PuntosVenta({ navigation }) {
   const [contrasena, setContrasena] = useState('');
   const [updateData, setUpdateData] = useState(null); // Agregado para manejar la edición
   const [showPassword, setShowPassword] = useState(false); // Nuevo estado para controlar la visibilidad de la contraseña
+  const [modalVisible, setModalVisible] = useState(false); // Nuevo estado para mostrar el modal de actualización
 
   // Llama a obtenerUsuarios cuando el componente se monte
   useEffect(() => {
@@ -127,6 +128,7 @@ export default function PuntosVenta({ navigation }) {
         Alert.alert('Éxito', 'Punto de venta actualizado correctamente');
         obtenerUsuarios(); // Actualiza la lista de puntos de venta después de la actualización
         setUpdateData(null); // Limpia los datos de edición
+        setModalVisible(false); // Cierra el modal después de la actualización
         // Limpia los campos del formulario después de la actualización
         setUsuario('');
         setContrasena('');

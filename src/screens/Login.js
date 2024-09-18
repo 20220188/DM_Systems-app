@@ -20,6 +20,8 @@ import Input from '../components/Inputs/inputs';
 import Buttons from '../components/Botones/Buttons';
 
 export default function LoginScreen({ navigation }) {
+
+  const ip = Constantes.IP;
   const [loading, setLoading] = useState(false);
   const [isContra, setIsContra] = useState(true);
   const [alias, setAlias] = useState('');
@@ -139,7 +141,30 @@ const handlerLogin = async () => {
   }
 };
 
-  
+/*const cerrarSesion = async () => {
+  try {
+      const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
+          method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+          console.log("Sesión Finalizada");
+          Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
+              {
+                  text: "OK",
+                  onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
+              }
+          ]);
+      } else {
+          console.log('No se pudo eliminar la sesión');
+      }
+  } catch (error) {
+      console.error('Error desde Catch', error);
+      Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
+  }
+};*/
   
 
   const irRegistrar = () => {
@@ -182,7 +207,7 @@ const handlerLogin = async () => {
             </View>
 
             <View style={styles.divider} />
-            <Buttons textoBoton="Iniciar sesión" accionBoton={handlerLogin} />                                          
+            <Buttons textoBoton="Iniciar sesión" accionBoton={handlerLogin} />                                         
           </ScrollView>
         )}
       </KeyboardAvoidingView>
@@ -215,7 +240,20 @@ const styles = StyleSheet.create({
     width: '90%',
     marginBottom: 10,
   },
-
+  logoutButton: {
+    backgroundColor: '#ff6347',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 20,
+},
+logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+},
   input: {
     width: '100%',
     height: 40,
