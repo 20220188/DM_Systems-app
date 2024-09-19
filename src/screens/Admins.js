@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Modal, ScrollView, Button } from 'react-native';
 import * as Constantes from '../../utils/constantes';
+import { TextInputMask } from 'react-native-masked-text';
 import { DrawerLayout } from 'react-native-gesture-handler';
 import CustomDrawer from '../components/CustomDrawer';
 import LoadingScreen from './LoadingScreen';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 
 export default function Admin({ navigation }) {
   const drawer = useRef(null);
@@ -34,7 +34,6 @@ export default function Admin({ navigation }) {
     usuario: '',
     email: '',
   });
-
 
   const ip = Constantes.IP;
 
@@ -131,7 +130,7 @@ export default function Admin({ navigation }) {
         setNivelUsuario('');
 
         Alert.alert('Éxito', 'Usuario creado correctamente');
-        obtenerUsuarios(); // Actualiza la lista de usuarios después de agregar uno nuevo
+        obtenerUsuarios();
       } else {
         Alert.alert('Error', responseData.error || 'Error al agregar el administrador');
       }
@@ -144,7 +143,7 @@ export default function Admin({ navigation }) {
   };
 
   const handleUpdate = (usuario) => {
-    console.log('Usuario seleccionado para actualizar:', usuario);
+    setSelectedUser(usuario);
     setUpdateData({
       idUsuario: usuario.id_usuario,
       nombre: usuario.nombre,
@@ -164,15 +163,21 @@ export default function Admin({ navigation }) {
         formData.append('telefonoUsuario', updateData.telefono);
         formData.append('Usuario', updateData.usuario);
         formData.append('correoUsuario', updateData.email);
-
+  
         const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_usuarios.php?action=updateRow`, {
           method: 'POST',
           body: formData,
         });
-
+  
         if (response.ok) {
           Alert.alert('Éxito', 'Usuario actualizado correctamente');
-          obtenerUsuarios();
+  
+          // Actualiza el usuario en la lista de usuarios sin eliminarlo
+          setUsuarios((prevUsuarios) => 
+            prevUsuarios.map((user) => 
+              user.id_usuario === updateData.idUsuario ? { ...user, ...updateData } : user
+            )
+          );
         } else {
           const errorText = await response.text();
           Alert.alert('Error', 'Error al actualizar el usuario: ' + errorText);
@@ -185,9 +190,9 @@ export default function Admin({ navigation }) {
       }
     }
   };
+  
 
   const eliminarUsuario = async (idUsuario) => {
-    // Mostrar el diálogo de confirmación
     Alert.alert(
       'Confirmación de Eliminación',
       '¿Estás seguro de que deseas eliminar este usuario?',
@@ -200,7 +205,6 @@ export default function Admin({ navigation }) {
         {
           text: 'Sí',
           onPress: async () => {
-            // Continuar con la eliminación si el usuario confirma
             try {
               const formData = new FormData();
               formData.append('idUsuario', idUsuario);
@@ -218,7 +222,7 @@ export default function Admin({ navigation }) {
 
                 if (responseData.status === 1) {
                   Alert.alert('Éxito', 'Registro eliminado correctamente');
-                  obtenerUsuarios(); // Actualizar la lista de usuarios
+                  obtenerUsuarios();
                 } else {
                   console.error('Error al eliminar el administrador:', responseData.error || 'Error desconocido');
                   Alert.alert('Error', responseData.error || 'Error al eliminar el administrador');
@@ -268,19 +272,28 @@ export default function Admin({ navigation }) {
             value={nombre}
             onChangeText={setNombre}
           />
+          
           <TextInput
             style={styles.input}
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
           />
-          <TextInput
+         <TextInputMask
+            type={'custom'}
+            options={{
+              mask: '99999999-9'
+            }}
             style={styles.input}
             placeholder="DUI"
             value={dui}
             onChangeText={setDui}
           />
-          <TextInput
+          <TextInputMask
+            type={'custom'}
+            options={{
+              mask: '9999-9999'
+            }}
             style={styles.input}
             placeholder="Teléfono"
             value={telefono}
@@ -347,7 +360,7 @@ export default function Admin({ navigation }) {
               <View style={styles.cardButtons}>
                 <TouchableOpacity
                   style={[styles.cardButton, styles.editButton]}
-                  onPress={handleUpdate}
+                  onPress={() => handleUpdate(usuario)}
                 >
                   <Text style={styles.cardButtonText}>Actualizar</Text>
                 </TouchableOpacity>
@@ -367,48 +380,7 @@ export default function Admin({ navigation }) {
           <Text style={styles.buttonText}>Agregar Usuario</Text>
         </TouchableOpacity>
 
-        <DrawerLayout
-          ref={drawer}
-          drawerWidth={300}
-          drawerPosition="left"
-          drawerType="slide"
-          drawerBackgroundColor="#7393FC"
-          renderNavigationView={() => <CustomDrawer navigation={navigation} onLogout={handleLogout} />}
-        >
-          <View style={styles.container}>
-            {usuarios.map((usuario) => (
-              <View key={usuario.id_usuario} style={styles.card}>
-                <Text style={styles.cardTitle}>{usuario.nombre}</Text>
-                <Text style={styles.cardText}>Correo: {usuario.correo}</Text>
-                <Text style={styles.cardText}>DUI: {usuario.DUI}</Text>
-                <Text style={styles.cardText}>Teléfono: {usuario.telefono}</Text>
-                <Text style={styles.cardText}>Usuario: {usuario.usuario}</Text>
-                <Text style={styles.cardText}>Nivel: {usuario.tipo_usuario}</Text>
-                <View style={styles.cardButtons}>
-                  <TouchableOpacity
-                    style={[styles.cardButton, styles.editButton]}
-                    onPress={() => handleUpdate(usuario)}
-                  >
-                    <Text style={styles.cardButtonText}>Actualizar</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[styles.cardButton, styles.deleteButton]}
-                    onPress={() => eliminarUsuario(usuario.id_usuario)}
-                  >
-                    <Text style={styles.cardButtonText}>Eliminar</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
-          </View>
-
-          <TouchableOpacity style={styles.button} onPress={agregarAdministrador}>
-            <Text style={styles.buttonText}>Agregar Usuario</Text>
-          </TouchableOpacity>
-
-
-<Modal
+        <Modal
   visible={modalVisible}
   transparent={true}
   animationType="slide"
@@ -416,47 +388,61 @@ export default function Admin({ navigation }) {
 >
   <View style={styles.modalContainer}>
     <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Editar Usuario</Text>
+      
+      <Text style={styles.modalLabel}>Nombre:</Text>
       <TextInput
         style={styles.input}
         placeholder="Nombre"
         value={updateData.nombre}
         onChangeText={(text) => setUpdateData({ ...updateData, nombre: text })}
       />
+
+      <Text style={styles.modalLabel}>Usuario:</Text>
       <TextInput
         style={styles.input}
         placeholder="Usuario"
         value={updateData.usuario}
         onChangeText={(text) => setUpdateData({ ...updateData, usuario: text })}
       />
+
+      <Text style={styles.modalLabel}>Correo:</Text>
       <TextInput
         style={styles.input}
         placeholder="Correo"
         value={updateData.email}
         onChangeText={(text) => setUpdateData({ ...updateData, email: text })}
       />
+
+      <Text style={styles.modalLabel}>Teléfono:</Text>
       <TextInput
         style={styles.input}
         placeholder="Teléfono"
         value={updateData.telefono}
         onChangeText={(text) => setUpdateData({ ...updateData, telefono: text })}
       />
+
       <View style={styles.modalButtons}>
-        <TouchableOpacity style={styles.updateButton} onPress={handleUpdateData}>
-          <Text style={styles.updateButtonText}>Actualizar Datos</Text>
+        <TouchableOpacity
+          style={[styles.modalButton, styles.saveButton]}
+          onPress={handleUpdateData}
+        >
+          <Text style={styles.modalButtonText}>Guardar Cambios</Text>
         </TouchableOpacity>
-        <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+
+        <TouchableOpacity
+          style={[styles.modalButton, styles.cancelButton]}
+          onPress={() => setModalVisible(false)}
+        >
+          <Text style={styles.modalButtonText}>Cancelar</Text>
+        </TouchableOpacity>
       </View>
     </View>
   </View>
 </Modal>
 
-          {isLoading && (
-            <Modal visible={isLoading} transparent={true}>
-              <LoadingScreen />
-            </Modal>
-          )}
-        </DrawerLayout>
 
+        {isLoading && <LoadingScreen />}
       </View>
     </DrawerLayout>
   );
@@ -466,7 +452,125 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#D2D9F1',
-    paddingBottom: 80, // Para evitar que el botón se sobreponga al contenido
+    paddingBottom: 80,
+  },
+  menuButton: {
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    marginBottom: 10,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  card: {
+    backgroundColor: '#f8f9fa',
+    padding: 20,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  cardText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  cardButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  cardButton: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    width: '48%',
+  },
+  editButton: {
+    backgroundColor: '#28a745',
+  },
+  deleteButton: {
+    backgroundColor: '#dc3545',
+  },
+  cardButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  modalButton: {
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  saveButton: {
+    backgroundColor: '#28a745',
+  },
+  cancelButton: {
+    backgroundColor: '#dc3545',
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  titleMargin: {
+    marginBottom: 10,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -480,32 +584,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   titleMargin: {
-    marginTop: 50, // Ajusta este valor según tus necesidades
+    marginTop: 50,
     marginBottom: 20,
   },
-
-
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  icon: {
+    marginLeft: 10
   },
-  modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 10,
-  },
-
-
   input: {
     width: '100%',
     padding: 12,
@@ -514,13 +598,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#ddd',
     borderWidth: 1,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
   },
   button: {
     backgroundColor: '#251C6A',
@@ -536,15 +613,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
-  },
-  picker: {
-    width: '100%',
-    padding: 10,
-    marginVertical: 10,
-    backgroundColor: '#ffffff',
-    borderRadius: 30,
-    borderColor: '#ddd',
-    borderWidth: 3,
   },
   menuButton: {
     position: 'absolute',
@@ -595,13 +663,58 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalInput: {
     width: '100%',
+    padding: 10,
+    marginVertical: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    borderColor: '#ddd',
+    borderWidth: 1,
   },
-  eyeButton: {
-    position: 'absolute',
-    right: 14,
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
   },
+  modalButton: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    width: '45%',
+  },
+  buttonUpdate: {
+    backgroundColor: "#2196F3",
+  },
+  buttonCancel: {
+    backgroundColor: "#F44336",
+  }
 });

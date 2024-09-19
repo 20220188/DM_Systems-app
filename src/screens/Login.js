@@ -141,7 +141,7 @@ const handlerLogin = async () => {
   }
 };
 
-/*const cerrarSesion = async () => {
+const cerrarSesion = async () => {
   try {
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/administrador.php?action=logOut`, {
           method: 'GET'
@@ -164,7 +164,7 @@ const handlerLogin = async () => {
       console.error('Error desde Catch', error);
       Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
   }
-};*/
+};
   
 
   const irRegistrar = () => {
