@@ -241,7 +241,7 @@ export default function Admin({ navigation }) {
       { cancelable: false }
     );
   };
-
+/**/
   const handleLogout = () => {
     setIsLoading(true);
     setTimeout(() => {

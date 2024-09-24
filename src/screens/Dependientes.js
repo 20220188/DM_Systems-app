@@ -59,7 +59,8 @@ export default function Dependientes({ navigation }) {
     try {
       const formData = new FormData();
       formData.append('nombreDependiente', usuario);
-      formData.append('codigoDependiente', codigo);
+      formData.append('codigoDependiente', (codigo || '').replace(/[^0-9]/g, ''));
+
 
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_dependientes.php?action=createRow`, {
         method: 'POST',
@@ -104,7 +105,8 @@ export default function Dependientes({ navigation }) {
       const formData = new FormData();
       formData.append('idDependiente', updateData.id_dependiente);
       formData.append('nombreDependiente', modalUsuario);
-      formData.append('codigoDependiente', modalCodigo);
+      formData.append('codigoDependiente', (modalCodigo || '').replace(/[^0-9]/g, ''));
+
 
       const response = await fetch(`${ip}/D-M-Systems-PTC/api/services/admin/admin_maestro_dependientes.php?action=updateRow`, {
         method: 'POST',
@@ -212,7 +214,7 @@ export default function Dependientes({ navigation }) {
             onChangeText={(text) => setCodigo(text.replace(/[^0-9]/g, ''))}
             keyboardType="numeric"
           />
-          
+
           {usuarios.map((usuario) => (
             <View key={usuario.id_dependiente} style={styles.card}>
               <Text style={styles.cardTitle}>{usuario.nombre_dependiente}</Text>
@@ -263,36 +265,31 @@ export default function Dependientes({ navigation }) {
                 onChangeText={setModalUsuario}
               />
               <TextInput
-                style={styles.modalInput}
+                style={styles.input}
                 placeholder="Código"
-                value={modalCodigo}
-                onChangeText={(text) => setModalCodigo(text.replace(/[^0-9]/g, ''))}
+                value={codigo}
+                onChangeText={(text) => setCodigo((text || '').replace(/[^0-9]/g, ''))}
                 keyboardType="numeric"
               />
-              <View style={styles.modalButtons}>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.buttonUpdate]}
-                  onPress={handleUpdate}
-                >
-                  <Text style={styles.textStyle}>Actualizar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.buttonCancel]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Cancelar</Text>
-                </TouchableOpacity>
-              </View>
+
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={handleUpdate}
+              >
+                <Text style={styles.modalButtonText}>Actualizar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancelar</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
-      </View>
 
-      {isLoading && (
-        <Modal visible={isLoading} transparent={true}>
-          <LoadingScreen />
-        </Modal>
-      )}
+        {isLoading && <LoadingScreen />}
+      </View>
     </DrawerLayout>
   );
 }
