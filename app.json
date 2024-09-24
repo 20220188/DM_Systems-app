@@ -1,5 +1,6 @@
 {
   "expo": {
+    "icon": "./assets/DM.png",
     "name": "DM_Systems-app",
     "slug": "DM_Systems-app",
     "version": "1.0.0",
@@ -15,7 +16,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-DM.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.sumuuuun.DM_Systemsapp"
